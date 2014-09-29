@@ -1,0 +1,27 @@
+﻿Build started 9/15/2014 2:07:49 PM.
+     1>Project "c:\Users\Bree\documents\visual studio 2013\Projects\Balls\Balls\Balls.vcxproj" on node 2 (Build target(s)).
+     1>CustomBuild:
+         Moc'ing balls.h...
+         Uic'ing balls.ui...
+         Rcc'ing balls.qrc...
+     1>RCC : warning : No resources in 'c:\Users\Bree\documents\visual studio 2013\Projects\Balls\Balls\balls.qrc'.
+         
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I.\GeneratedFiles /I. /IC:\Qt\53\msvc2013_64\include /I.\GeneratedFiles\Debug /IC:\Qt\53\msvc2013_64\include\QtCore /IC:\Qt\53\msvc2013_64\include\QtGui /IC:\Qt\53\msvc2013_64\include\QtWidgets /Zi /nologo /W1 /WX- /Od /Oy- /D UNICODE /D WIN32 /D WIN64 /D QT_DLL /D QT_CORE_LIB /D QT_GUI_LIB /D QT_WIDGETS_LIB /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt balls.cpp GeneratedFiles\Debug\moc_balls.cpp main.cpp
+         balls.cpp
+         moc_balls.cpp
+         main.cpp
+         Generating Code...
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I.\GeneratedFiles /I. /IC:\Qt\53\msvc2013_64\include /I.\GeneratedFiles\Debug /IC:\Qt\53\msvc2013_64\include\QtCore /IC:\Qt\53\msvc2013_64\include\QtGui /IC:\Qt\53\msvc2013_64\include\QtWidgets /Zi /nologo /W1 /WX- /Od /Oy- /D UNICODE /D WIN32 /D WIN64 /D QT_DLL /D QT_CORE_LIB /D QT_GUI_LIB /D QT_WIDGETS_LIB /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt GeneratedFiles\qrc_balls.cpp
+         qrc_balls.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"c:\Users\Bree\documents\visual studio 2013\Projects\Balls\Win32\Debug\\Balls.exe" /NOLOGO /LIBPATH:C:\Qt\53\msvc2013_64\lib qtmaind.lib Qt5Cored.lib Qt5Guid.lib Qt5Widgetsd.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"c:\Users\Bree\documents\visual studio 2013\Projects\Balls\Win32\Debug\Balls.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"c:\Users\Bree\documents\visual studio 2013\Projects\Balls\Win32\Debug\Balls.lib" /MACHINE:X86 /SAFESEH Debug\balls.obj
+         Debug\moc_balls.obj
+         Debug\qrc_balls.obj
+         Debug\main.obj
+     1>Qt5Widgetsd.lib(Qt5Widgetsd.dll) : fatal error LNK1112: module machine type 'x64' conflicts with target machine type 'X86'
+     1>Done Building Project "c:\Users\Bree\documents\visual studio 2013\Projects\Balls\Balls\Balls.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:04.36
