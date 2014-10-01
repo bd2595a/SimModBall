@@ -19,8 +19,8 @@ public:
 class Ball : public QGraphicsItem
 {
 public:
-	Vector position;
-	Vector velocity;
+	Vector* position;
+	Vector* velocity;
 	float radius;
 	int id;
 
