@@ -205,22 +205,22 @@ void TimerHandler::onTimer()
 				balls[j]->velocity = normalPlaneJ;
 				balls[i]->velocity = normalPlaneI;
 			}
-			if (dist->Length() < balls[j]->radius + balls[i]->radius){ //IF VECTOR LENGTH IS NEGSTIVE
-				// OVERLAP
-				//float adjust = (balls[j]->radius + balls[i]->radius- dist->Length())/dist->Length();
-				dist->Multiply(0.5);
-				//COMBINE THESE TWO IF STATEMENTS INTO A SINGLE VECTOR , NOT SEPARATE VALUES
-				//move apart x
-				if (balls[j]->position->x > balls[i]->position->x){
-					balls[j]->position->Add(dist->x, dist->y);
-					balls[i]->position->Sub(dist);
-				}
-				else{
-					//move j right, move i left
-					balls[i]->position->Add(dist->x, dist->y);
-					balls[j]->position->Sub(dist);
-				}
-			}
+			//if (dist->Length() < balls[j]->radius + balls[i]->radius){ //IF VECTOR LENGTH IS NEGSTIVE
+			//	// OVERLAP
+			//	//float adjust = (balls[j]->radius + balls[i]->radius- dist->Length())/dist->Length();
+			//	dist->Multiply(0.5);
+			//	//COMBINE THESE TWO IF STATEMENTS INTO A SINGLE VECTOR , NOT SEPARATE VALUES
+			//	//move apart x
+			//	if (balls[j]->position->x > balls[i]->position->x){
+			//		balls[j]->position->Add(dist->x, dist->y);
+			//		balls[i]->position->Sub(dist);
+			//	}
+			//	else{
+			//		//move j right, move i left
+			//		balls[i]->position->Add(dist->x, dist->y);
+			//		balls[j]->position->Sub(dist);
+			//	}
+			//}
 		}
 	}
 
