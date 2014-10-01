@@ -139,6 +139,22 @@ void TimerHandler::onTimer()
 		// CHECK AGAINST ALL OTHER BALLS
 		for (int i = j + 1; i < NUMBALLS; i++){
 
+			/* PSEUDO CODE
+	
+			against each ball[j] and ball[i]
+
+			Vector dist = new Vector( abs(ball[j]->position->x - ball[i]->position->x ) , abs(ball[j]->position->y - ball[i]->position->y )  )
+
+			if ( dist->length() <= ( ball[j]->radius + ball[i]->radius ) ){
+				collision stuff
+			}
+			if (same if statement as above except < instead of <= ){
+				// overlap stuff 
+				
+			}
+
+			*/ 
+
 			balls[j]->position->Sub(balls[i]->position);
 			Vector* dist = balls[j]->position;
 			balls[j]->position->Add(balls[i]->position->x, balls[i]->position->y);
