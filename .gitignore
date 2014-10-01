@@ -60,6 +60,7 @@ MakeFile
 *.vcxproj
 *.vcxproj.filters
 *.ui
+*.pri
 
 *.sdf
 ipch/
