@@ -177,7 +177,7 @@ void TimerHandler::onTimer()
 
 	// MOVE THE BALL ON THE SCREEN
 	for (int d = 0; d < NUMBALLS; d++){
-		balls[d]->setPos(balls[d]->position.x, balls[d]->position.y);;
+		balls[d]->setPos(balls[d]->position.x, balls[d]->position.y);
 	}
 
 }
