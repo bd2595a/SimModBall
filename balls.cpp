@@ -130,7 +130,7 @@ void TimerHandler::onTimer()
 			balls[j]->velocity->x = balls[j]->velocity->x * -1;
 		}
 		if (balls[j]->position->y < 0 + balls[j]->radius){
-			// Wall T @ position 0
+			// Wall T @ position 0c
 			balls[j]->position->y = balls[j]->radius;
 			balls[j]->velocity->y = balls[j]->velocity->y * -1;
 		}
@@ -164,6 +164,25 @@ void TimerHandler::onTimer()
 			balls[j]->position->Add(balls[i]->position->x, balls[i]->position->y);
 			// COLLISION
 			// collide
+			if (dist->Length() < balls[j]->radius + balls[i]->radius){//correct for the overlap, then bounce them
+				// OVERLAP
+				//float adjust = (balls[j]->radius + balls[i]->radius- dist->Length())/dist->Length();
+				dist->x /= 7;
+				dist->y /= 7;
+				//COMBINE THESE TWO IF STATEMENTS INTO A SINGLE VECTOR , NOT SEPARATE VALUES
+				//move apart x
+				balls[j]->position->Add(dist->x, dist->y);
+				balls[i]->position->Sub(dist);
+				//if (balls[j]->position->x > balls[i]->position->x){
+				//	balls[j]->position->Add(dist->x, dist->y);
+				//	balls[i]->position->Sub(dist);
+				//}
+				//else{
+				//	//move j right, move i left
+				//	balls[i]->position->Add(dist->x, dist->y);
+				//	balls[j]->position->Sub(dist);
+				//}
+			}
 			if (dist->Length() <= balls[j]->radius + balls[i]->radius){ 
 				//calculations for J's velocity
 				//calculate the normal plane 
@@ -201,26 +220,10 @@ void TimerHandler::onTimer()
 
 				// Reapply the move-back from before the collision (using the post collision velocity)
 				balls[i]->position->Add(normalPlaneI);
-				balls[j]->position->Add(normalPlaneJ);	
-				balls[j]->velocity = normalPlaneJ;
-				balls[i]->velocity = normalPlaneI;
+				balls[j]->position->Add(normalPlaneJ);
+				balls[i]->velocity = normalPlaneJ;
+				balls[j]->velocity = normalPlaneI;
 			}
-			//if (dist->Length() < balls[j]->radius + balls[i]->radius){ //IF VECTOR LENGTH IS NEGSTIVE
-			//	// OVERLAP
-			//	//float adjust = (balls[j]->radius + balls[i]->radius- dist->Length())/dist->Length();
-			//	dist->Multiply(0.5);
-			//	//COMBINE THESE TWO IF STATEMENTS INTO A SINGLE VECTOR , NOT SEPARATE VALUES
-			//	//move apart x
-			//	if (balls[j]->position->x > balls[i]->position->x){
-			//		balls[j]->position->Add(dist->x, dist->y);
-			//		balls[i]->position->Sub(dist);
-			//	}
-			//	else{
-			//		//move j right, move i left
-			//		balls[i]->position->Add(dist->x, dist->y);
-			//		balls[j]->position->Sub(dist);
-			//	}
-			//}
 		}
 	}
 
