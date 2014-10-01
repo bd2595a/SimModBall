@@ -35,6 +35,10 @@ Vector::Vector(float xVal, float yVal)
 	x = xVal;
 	y = yVal;
 }
+void Vector::Add(Vector* vector){
+	x += vector->x;
+	y -= vector->y;
+}
 
 void Vector::Add(float tx, float ty){
 	x += tx;

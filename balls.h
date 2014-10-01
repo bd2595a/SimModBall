@@ -9,6 +9,7 @@ public:
 	float y;
 	Vector(float, float);
 	Vector();
+	void Add(Vector*);
 	void Add(float, float);
 	void Sub(Vector*);
 	void Multiply(float);
@@ -41,8 +42,7 @@ public:
 //like a Runnable subclass
 class TimerHandler : public QObject
 {
-private:
-	Q_OBJECT
+Q_OBJECT
 public:
 	TimerHandler(int);
 	protected slots:
