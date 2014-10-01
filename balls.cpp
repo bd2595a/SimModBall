@@ -205,23 +205,12 @@ int main(int argc, char** argv)
 	scene.setSceneRect(0, 0, 500, 500);
 	srand(time(NULL));
 
-	balls[0] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, 0);	//create object, put addr in balls[0]
-	balls[1] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, 1); 	//position x,y , velocity x,y ,radius,id
-	balls[2] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, 2); 	//position x,y , velocity x,y ,radius,id
-	balls[3] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, 3); 	//position x,y , velocity x,y ,radius,id
-	balls[4] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, 4); 	//position x,y , velocity x,y ,radius,id
+	for (int i=0; i < NUMBALLS; i++){
+		balls[i] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, i);	
+		scene.addItem(balls[i]);
+		balls[i]->setPos(balls[i]->position.x, balls[i]->position.y);
+	}
 
-	scene.addItem(balls[0]);
-	scene.addItem(balls[1]);
-	scene.addItem(balls[2]);
-	scene.addItem(balls[3]);
-	scene.addItem(balls[4]);
-
-	balls[0]->setPos(balls[0]->position.x, balls[0]->position.y);
-	balls[1]->setPos(balls[1]->position.x, balls[1]->position.y);
-	balls[2]->setPos(balls[2]->position.x, balls[2]->position.y);
-	balls[3]->setPos(balls[3]->position.x, balls[3]->position.y);
-	balls[4]->setPos(balls[4]->position.x, balls[4]->position.y);
 	QGraphicsView view(&scene);
 	view.setWindowTitle("Balls JC");
 	view.resize(500, 500);
