@@ -150,7 +150,6 @@ void TimerHandler::onTimer()
 			}
 			if (same if statement as above except < instead of <= ){
 			// overlap stuff
-
 			}
 
 			*/
@@ -158,21 +157,22 @@ void TimerHandler::onTimer()
 			balls[j]->position->Sub(balls[i]->position);
 			Vector* dist = new Vector(balls[j]->position->x,balls[j]->position->y);
 			balls[j]->position->Add(balls[i]->position->x, balls[i]->position->y);
-			float thing = dist->Length();
 			// COLLISION
 			// collide
 			if (dist->Length() <= balls[j]->radius + balls[i]->radius){ // IF VECTOR length ==0
 				Vector* tempv = balls[j]->velocity;
-				balls[j]->velocity->Multiply(-1);
-				balls[i]->velocity->Multiply(-1);
+				balls[j]->velocity=balls[i]->velocity;
+				balls[i]->velocity=tempv;
 			}
 			else if (dist->Length() < balls[j]->radius + balls[i]->radius){ //IF VECTOR LENGTH IS NEGSTIVE
 				// OVERLAP
-				float adjust = (balls[j]->radius + balls[i]->radius- dist->Length())/dist->Length();
+				//float adjust = (balls[j]->radius + balls[i]->radius- dist->Length())/dist->Length();
+				dist->Multiply(0.5);
 				//COMBINE THESE TWO IF STATEMENTS INTO A SINGLE VECTOR , NOT SEPARATE VALUES
 				//move apart x
 				if (balls[j]->position->x > balls[i]->position->x){
 					balls[j]->position->Add(dist->x, dist->y);
+					balls[i]->position->Sub(dist);
 				}
 				else{
 					//move j right, move i left
@@ -181,7 +181,6 @@ void TimerHandler::onTimer()
 				}
 			}
 		}
-
 	}
 
 	// MOVE THE BALL ON THE SCREEN
