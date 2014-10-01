@@ -58,6 +58,7 @@ MakeFile
 *.proj
 *.config
 *.vcxproj
+*.vcxproj.filters
 *.ui
 
 *.sdf
