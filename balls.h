@@ -13,6 +13,7 @@ public:
 	void Add(float, float);
 	void Sub(Vector*);
 	void Multiply(float);
+	float DotProduct(Vector*);
 	float Length();
 };
 

@@ -57,6 +57,11 @@ void Vector::Sub(Vector* vector)
 	y -= vector->y;
 }
 
+float Vector::DotProduct(Vector* vector2)
+{
+	return ((x*vector2->x)+(y*vector2->y));
+}
+
 float Vector::Length()
 {
 	return sqrt(((x)*(x)) + ((y)* (y)));
@@ -159,12 +164,38 @@ void TimerHandler::onTimer()
 			balls[j]->position->Add(balls[i]->position->x, balls[i]->position->y);
 			// COLLISION
 			// collide
-			if (dist->Length() <= balls[j]->radius + balls[i]->radius){ // IF VECTOR length ==0
-				Vector* tempv = balls[j]->velocity;
-				balls[j]->velocity=balls[i]->velocity;
-				balls[i]->velocity=tempv;
+			if (dist->Length() <= balls[j]->radius + balls[i]->radius){ 
+				float lengthJ = dist->Length();
+				float xJ = balls[j]->velocity->x / lengthJ;
+				float yJ = balls[j]->velocity->y / lengthJ;
+
+				Vector* normalPlaneJ = new Vector(xJ, yJ);
+				Vector* collisionPlaneJ = new Vector(-1 * normalPlaneJ->y, normalPlaneJ->x);
+				float n_velRJ = normalPlaneJ->DotProduct(balls[j]->velocity);
+				float c_velRJ = collisionPlaneJ->DotProduct(balls[j]->velocity);
+
+				normalPlaneJ->Multiply(n_velRJ);
+				collisionPlaneJ->Multiply(c_velRJ);
+				normalPlaneJ->Add(collisionPlaneJ);
+				Vector* velR_aJ = normalPlaneJ;
+				balls[j]->velocity = velR_aJ;
+
+				float lengthI = dist->Length();
+				float xI = balls[i]->velocity->x / lengthI;
+				float yI = balls[i]->velocity->y / lengthI;
+
+				Vector* normalPlaneI = new Vector(xI, yI);
+				Vector* collisionPlaneI = new Vector(-1 * normalPlaneI->y, normalPlaneI->x);
+				float n_velRI = normalPlaneI->DotProduct(balls[i]->velocity);
+				float c_velRI = collisionPlaneI->DotProduct(balls[i]->velocity);
+
+				normalPlaneI->Multiply(n_velRI);
+				collisionPlaneI->Multiply(c_velRI);
+				normalPlaneI->Add(collisionPlaneI);
+				Vector* velR_aI = normalPlaneI;
+				balls[i]->velocity = velR_aI;
 			}
-			else if (dist->Length() < balls[j]->radius + balls[i]->radius){ //IF VECTOR LENGTH IS NEGSTIVE
+			if (dist->Length() < balls[j]->radius + balls[i]->radius){ //IF VECTOR LENGTH IS NEGSTIVE
 				// OVERLAP
 				//float adjust = (balls[j]->radius + balls[i]->radius- dist->Length())/dist->Length();
 				dist->Multiply(0.5);
