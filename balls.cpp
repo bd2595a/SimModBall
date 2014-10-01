@@ -78,7 +78,7 @@ void Ball::printBall()
 }
 void Ball::move(float dt)
 {
-	position->Add(((velocity->x)*dt),((velocity->y)*dt));
+	position->Add(((velocity->x)*dt), ((velocity->y)*dt));
 }
 
 //specify where to update screen here
@@ -140,47 +140,43 @@ void TimerHandler::onTimer()
 		for (int i = j + 1; i < NUMBALLS; i++){
 
 			/* PSEUDO CODE
-	
+
 			against each ball[j] and ball[i]
 
 			Vector dist = new Vector( abs(ball[j]->position->x - ball[i]->position->x ) , abs(ball[j]->position->y - ball[i]->position->y )  )
 
 			if ( dist->length() <= ( ball[j]->radius + ball[i]->radius ) ){
-				collision stuff
+			collision stuff
 			}
 			if (same if statement as above except < instead of <= ){
-				// overlap stuff 
-				
+			// overlap stuff
+
 			}
 
-			*/ 
+			*/
 
 			balls[j]->position->Sub(balls[i]->position);
-			Vector* dist = balls[j]->position;
+			Vector* dist = new Vector(balls[j]->position->x,balls[j]->position->y);
 			balls[j]->position->Add(balls[i]->position->x, balls[i]->position->y);
-
-
-			if (dist->Length() == 0){ // IF VECTOR length ==0
-				// COLLISSION
-				// switch velocities, both x and y
+			float thing = dist->Length();
+			// COLLISION
+			// collide
+			if (dist->Length() <= balls[j]->radius + balls[i]->radius){ // IF VECTOR length ==0
 				Vector* tempv = balls[j]->velocity;
-				balls[j]->velocity = balls[i]->velocity;
-				balls[i]->velocity = tempv;
+				balls[j]->velocity->Multiply(-1);
+				balls[i]->velocity->Multiply(-1);
 			}
-			if (dist->Length() < 0){ //IF VECTOR LENGTH IS NEGSTIVE
+			else if (dist->Length() < balls[j]->radius + balls[i]->radius){ //IF VECTOR LENGTH IS NEGSTIVE
 				// OVERLAP
-				dist->x /= 2;
-				dist->y /= 2;
-
+				float adjust = (balls[j]->radius + balls[i]->radius- dist->Length())/dist->Length();
 				//COMBINE THESE TWO IF STATEMENTS INTO A SINGLE VECTOR , NOT SEPARATE VALUES
 				//move apart x
-				if (balls[j]->position->x < balls[i]->position->x){
+				if (balls[j]->position->x > balls[i]->position->x){
 					balls[j]->position->Add(dist->x, dist->y);
-					balls[i]->position->Sub(dist);
 				}
-				else{ //(balls[j]->position->x > balls[i]->position->x)
+				else{
 					//move j right, move i left
-					balls[i]->position->Add(dist->x,dist->y);
+					balls[i]->position->Add(dist->x, dist->y);
 					balls[j]->position->Sub(dist);
 				}
 			}
@@ -211,8 +207,8 @@ int main(int argc, char** argv)
 	scene.setSceneRect(0, 0, 500, 500);
 	srand(time(NULL));
 
-	for (int i=0; i < NUMBALLS; i++){
-		balls[i] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, i);	
+	for (int i = 0; i < NUMBALLS; i++){
+		balls[i] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, i);
 		scene.addItem(balls[i]);
 		balls[i]->setPos(balls[i]->position->x, balls[i]->position->y);
 	}
