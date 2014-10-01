@@ -159,8 +159,8 @@ void TimerHandler::onTimer()
 			}
 			if (dist->Length() < 0){ //IF VECTOR LENGTH IS NEGSTIVE
 				// OVERLAP
-				float movedistx = absJC(dist->x) / 2;
-				float movedisty = absJC(dist->y) / 2;
+				dist->x /= 2;
+				dist->y /= 2;
 
 				//COMBINE THESE TWO IF STATEMENTS INTO A SINGLE VECTOR , NOT SEPARATE VALUES
 				//move apart x
