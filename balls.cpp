@@ -139,8 +139,8 @@ void TimerHandler::onTimer()
 		// CHECK AGAINST ALL OTHER BALLS
 		for (int i = j + 1; i < NUMBALLS; i++){
 
-			balls[j]->position->Sub(&balls[i]->position);
-			Vector* dist = &balls[j]->position;
+			balls[j]->position->Sub(balls[i]->position);
+			Vector* dist = balls[j]->position;
 			balls[j]->position->Add(balls[i]->position->x, balls[i]->position->y);
 
 
