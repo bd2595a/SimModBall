@@ -165,35 +165,45 @@ void TimerHandler::onTimer()
 			// COLLISION
 			// collide
 			if (dist->Length() <= balls[j]->radius + balls[i]->radius){ 
+				//calculations for J's velocity
+				//calculate the normal plane 
 				float lengthJ = dist->Length();
 				float xJ = balls[j]->velocity->x / lengthJ;
 				float yJ = balls[j]->velocity->y / lengthJ;
-
-				Vector* normalPlaneJ = new Vector(xJ, yJ);
-				Vector* collisionPlaneJ = new Vector(-1 * normalPlaneJ->y, normalPlaneJ->x);
-				float n_velRJ = normalPlaneJ->DotProduct(balls[j]->velocity);
-				float c_velRJ = collisionPlaneJ->DotProduct(balls[j]->velocity);
-
-				normalPlaneJ->Multiply(n_velRJ);
-				collisionPlaneJ->Multiply(c_velRJ);
-				normalPlaneJ->Add(collisionPlaneJ);
-				Vector* velR_aJ = normalPlaneJ;
-				balls[j]->velocity = velR_aJ;
-
 				float lengthI = dist->Length();
 				float xI = balls[i]->velocity->x / lengthI;
 				float yI = balls[i]->velocity->y / lengthI;
 
+				Vector* normalPlaneJ = new Vector(xJ, yJ);
 				Vector* normalPlaneI = new Vector(xI, yI);
+				//calculate the collisionPlane
+				Vector* collisionPlaneJ = new Vector(-1 * normalPlaneJ->y, normalPlaneJ->x);
 				Vector* collisionPlaneI = new Vector(-1 * normalPlaneI->y, normalPlaneI->x);
+				//calculate prior velocities relative to the collisoin plane and normal
+				float n_velRJ = normalPlaneJ->DotProduct(balls[j]->velocity);
+				float c_velRJ = collisionPlaneJ->DotProduct(balls[j]->velocity);
 				float n_velRI = normalPlaneI->DotProduct(balls[i]->velocity);
 				float c_velRI = collisionPlaneI->DotProduct(balls[i]->velocity);
 
-				normalPlaneI->Multiply(n_velRI);
+
+				//calculate the scaler velocities of each object after the collision
+				float n_velJ_after = ((n_velRJ * (balls[j]->radius - balls[i]->radius)) + (2 * balls[i]->radius * n_velRI)) / (balls[i]->radius + balls[j]->radius);
+				float n_velI_after = ((n_velRI * (balls[i]->radius - balls[j]->radius)) + (2 * balls[j]->radius * n_velRJ)) / (balls[i]->radius + balls[j]->radius);
+			
+				//convert scalers to vectors by multplying the normalised plane vectors and get vectors into a single vector in world space
+				normalPlaneJ->Multiply(n_velJ_after);
+				collisionPlaneJ->Multiply(c_velRJ);
+				normalPlaneJ->Add(collisionPlaneJ);
+				normalPlaneI->Multiply(n_velI_after);
 				collisionPlaneI->Multiply(c_velRI);
 				normalPlaneI->Add(collisionPlaneI);
-				Vector* velR_aI = normalPlaneI;
-				balls[i]->velocity = velR_aI;
+
+
+				// Reapply the move-back from before the collision (using the post collision velocity)
+				balls[i]->position->Add(normalPlaneI);
+				balls[j]->position->Add(normalPlaneJ);	
+				balls[j]->velocity = normalPlaneJ;
+				balls[i]->velocity = normalPlaneI;
 			}
 			if (dist->Length() < balls[j]->radius + balls[i]->radius){ //IF VECTOR LENGTH IS NEGSTIVE
 				// OVERLAP
