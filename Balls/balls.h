@@ -1,18 +1,32 @@
 #include <Qtwidgets>
+#include <QWidget>
 
+class Vector
+{
+
+public:
+	float x;
+	float y;
+	Vector(float, float);
+	Vector();
+	void Add(float, float);
+	Vector Sub(Vector*);
+	void Multiply(float);
+	float Length();
+};
 
 class Ball : public QGraphicsItem
 {
 public:
-	float position;
+	Vector position;
+	Vector velocity;
 	float radius;
-	float velocity;
 	int id;
 
 
-	//position, velocity, radius, id
+	//position x,y , velocity x,y ,radius,id
 	Ball();
-	Ball(float, float, float, int);
+	Ball(float, float, float, float, float, int);
 	//draw
 	void printBall();
 	//move delta time  
@@ -21,18 +35,19 @@ public:
 	QRectF boundingRect() const;
 	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget *widget);
 
-	//GETSET
-	void setVelocity(float);
+
 };
 
 //like a Runnable subclass
 class TimerHandler : public QObject
 {
-public:
+private:
 	Q_OBJECT
 public:
 	TimerHandler(int);
 	protected slots:
 	void onTimer();
 };
+
+
 
