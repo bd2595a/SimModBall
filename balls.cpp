@@ -47,9 +47,10 @@ void Vector::Multiply(float multiplier)
 	y *= multiplier;
 }
 
-Vector Vector::Sub(Vector* vector)
+void Vector::Sub(Vector* vector)
 {
-	return new Vector(x - vector->x, y - vector->y);
+	x -= vector->x;
+	y -= vector->y;
 }
 
 float Vector::Length()
@@ -69,11 +70,11 @@ Ball::Ball(float px, float py, float vx, float vy, float r, int i)
 
 void Ball::printBall()
 {
-	//cout << "The ball " << id << " is at position " << position->x << "," << position->y << endl;
+	//cout << "The ball " << id << " is at position " << position.x << "," << position.y << endl;
 }
 void Ball::move(float dt)
 {
-	position.Add(velocity->x*dt,velocity->y*dt);
+	position.Add(((velocity.x)*dt),((velocity.y)*dt));
 }
 
 //specify where to update screen here
@@ -109,66 +110,68 @@ void TimerHandler::onTimer()
 	// CHECK FOR FAILURE POINTS
 	for (int j = 0; j < NUMBALLS; j++) {
 		// CHECK IF OUT OF BOUNDS
-		if (balls[j]->position->x < 0 + balls[j]->radius){
+		if (balls[j]->position.x < 0 + balls[j]->radius){
 			// Wall L @ position 0
-			balls[j]->position->x = balls[j]->radius;
-			balls[j]->velocity->x = balls[j]->velocity->x * -1;
+			balls[j]->position.x = balls[j]->radius;
+			balls[j]->velocity.x = balls[j]->velocity.x * -1;
 		}
-		if (balls[j]->position->x > 500 - balls[j]->radius){
+		if (balls[j]->position.x > 500 - balls[j]->radius){
 			// Wall R @ position 500
-			balls[j]->position->x = 500 - balls[j]->radius;
-			balls[j]->velocity->x = balls[j]->velocity->x * -1;
+			balls[j]->position.x = 500 - balls[j]->radius;
+			balls[j]->velocity.x = balls[j]->velocity.x * -1;
 		}
-		if (balls[j]->position->y < 0 + balls[j]->radius){
+		if (balls[j]->position.y < 0 + balls[j]->radius){
 			// Wall T @ position 0
-			balls[j]->position->y = balls[j]->radius;
-			balls[j]->velocity->y = balls[j]->velocity->y * -1;
+			balls[j]->position.y = balls[j]->radius;
+			balls[j]->velocity.y = balls[j]->velocity.y * -1;
 		}
-		if (balls[j]->position->y > 500 - balls[j]->radius){
+		if (balls[j]->position.y > 500 - balls[j]->radius){
 			// Wall B @ position 500
-			balls[j]->position->y = 500 - balls[j]->radius;
-			balls[j]->velocity->y = balls[j]->velocity->y * -1;
+			balls[j]->position.y = 500 - balls[j]->radius;
+			balls[j]->velocity.y = balls[j]->velocity.y * -1;
 		}
 
 
 		// CHECK AGAINST ALL OTHER BALLS
 		for (int i = j + 1; i < NUMBALLS; i++){
 			/*
-			float posx = absJC(balls[j] -> position->x - balls[i] -> position->x);
-			float posy = absJC(balls[j] -> position->y - balls[i] -> position->y);
+			float posx = absJC(balls[j] -> position.x - balls[i] -> position.x);
+			float posy = absJC(balls[j] -> position.y - balls[i] -> position.y);
 
 			if( (posx*posx)+(posy*posy) < ( ( balls[j] -> radius + balls[i] -> radius)*( balls[j] -> radius + balls[i] -> radius) ) ){
 			//if overlap
-			float overlapx = ( balls[j] -> radius + balls[i] -> radius) - absJC(balls[j] -> position->x - balls[i] -> position->x);
-			float overlapy = ( balls[j] -> radius + balls[i] -> radius) - absJC(balls[j] -> position->y - balls[i] -> position->y);
+			float overlapx = ( balls[j] -> radius + balls[i] -> radius) - absJC(balls[j] -> position.x - balls[i] -> position.x);
+			float overlapy = ( balls[j] -> radius + balls[i] -> radius) - absJC(balls[j] -> position.y - balls[i] -> position.y);
 			}
 			*/
-			Vector dist = (absJC(balls[j]->position.Sub(balls[i]->position->x)));
-			//THIS SHOULD BE S VECTOR
+
+			balls[j]->position.Sub(&balls[i]->position);
+			Vector* dist = &balls[j]->position;
+			balls[j]->position.Add(balls[i]->position.x, balls[i]->position.y);
 
 
-			if (dist.Length() == 0){ // IF VECTOR length ==0
+			if (dist->Length() == 0){ // IF VECTOR length ==0
 				// COLLISSION
 				// switch velocities, both x and y
-				Vector* tempv = balls[j]->velocity;
-				balls[j]->velocity->x = balls[i]->velocity;
-				balls[i]->velocity->y = tempv;
+				Vector tempv = balls[j]->velocity;
+				balls[j]->velocity = balls[i]->velocity;
+				balls[i]->velocity = tempv;
 			}
-			if (dist.Length() < 0){ //IF VECTOR LENGTH IS NEGSTIVE
+			if (dist->Length() < 0){ //IF VECTOR LENGTH IS NEGSTIVE
 				// OVERLAP
 				float movedistx = absJC(dist->x) / 2;
 				float movedisty = absJC(dist->y) / 2;
 
 				//COMBINE THESE TWO IF STATEMENTS INTO A SINGLE VECTOR , NOT SEPARATE VALUES
 				//move apart x
-				if (balls[j]->position->x < balls[i]->position->x){
-					balls[j]->position.Add(dist);
-					balls[i]->position=balls[i]->position.Sub(dist);
+				if (balls[j]->position.x < balls[i]->position.x){
+					balls[j]->position.Add(dist->x, dist->y);
+					balls[i]->position.Sub(dist);
 				}
-				else{ //(balls[j]->position->x > balls[i]->position->x)
+				else{ //(balls[j]->position.x > balls[i]->position.x)
 					//move j right, move i left
-					balls[i]->position.Add(dist);
-					balls[j]->position = balls[j]->position.Sub(dist);
+					balls[i]->position.Add(dist->x,dist->y);
+					balls[j]->position.Sub(dist);
 				}
 			}
 		}
@@ -177,7 +180,7 @@ void TimerHandler::onTimer()
 
 	// MOVE THE BALL ON THE SCREEN
 	for (int d = 0; d < NUMBALLS; d++){
-		balls[d]->setPos(balls[d]->position->x, balls[d]->position->y);
+		balls[d]->setPos(balls[d]->position.x, balls[d]->position.y);
 	}
 
 }
@@ -210,11 +213,11 @@ int main(int argc, char** argv)
 	scene.addItem(balls[3]);
 	scene.addItem(balls[4]);
 
-	balls[0]->setPos(balls[0]->position->x, balls[0]->position->y);
-	balls[1]->setPos(balls[1]->position->x, balls[1]->position->y);
-	balls[2]->setPos(balls[2]->position->x, balls[2]->position->y);
-	balls[3]->setPos(balls[3]->position->x, balls[3]->position->y);
-	balls[4]->setPos(balls[4]->position->x, balls[4]->position->y);
+	balls[0]->setPos(balls[0]->position.x, balls[0]->position.y);
+	balls[1]->setPos(balls[1]->position.x, balls[1]->position.y);
+	balls[2]->setPos(balls[2]->position.x, balls[2]->position.y);
+	balls[3]->setPos(balls[3]->position.x, balls[3]->position.y);
+	balls[4]->setPos(balls[4]->position.x, balls[4]->position.y);
 	QGraphicsView view(&scene);
 	view.setWindowTitle("Balls JC");
 	view.resize(500, 500);

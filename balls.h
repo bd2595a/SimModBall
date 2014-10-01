@@ -10,7 +10,7 @@ public:
 	Vector(float, float);
 	Vector();
 	void Add(float, float);
-	Vector Sub(Vector*);
+	void Sub(Vector*);
 	void Multiply(float);
 	float Length();
 };
