@@ -70,11 +70,11 @@ float Vector::Length()
 // BALL
 Ball::Ball(){}
 
-Ball::Ball(float px, float py, float vx, float vy, float r, int i)
+Ball::Ball(float px, float py, float vx, float vy, float r,float m, int i)
 {
 	position = new Vector(px, py);
 	velocity = new Vector(vx, vy);
-	radius = r; id = i;
+	radius = r; id = i; mass = m;
 }
 
 void Ball::printBall()
@@ -157,6 +157,7 @@ void TimerHandler::onTimer()
 			// COLLISION
 			// collide
 			if (dist->Length() < balls[j]->radius + balls[i]->radius){
+				//OVERLAP CODE
 				float xoverlap = ( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->x / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) );
 				float yoverlap = ( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->y / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) );
 
@@ -217,8 +218,8 @@ void TimerHandler::onTimer()
 
 
 				//calculate the scaler velocities of each object after the collision
-				float n_velJ_after = ((n_velRJ * (balls[j]->radius - balls[i]->radius)) + (2 * balls[i]->radius * n_velRI)) / (balls[i]->radius + balls[j]->radius);
-				float n_velI_after = ((n_velRI * (balls[i]->radius - balls[j]->radius)) + (2 * balls[j]->radius * n_velRJ)) / (balls[i]->radius + balls[j]->radius);
+				float n_velJ_after = ((n_velRJ * (balls[j]->mass - balls[i]->mass)) + (2 * balls[i]->mass * n_velRI)) / (balls[i]->mass + balls[j]->mass);
+				float n_velI_after = ((n_velRI * (balls[i]->mass - balls[j]->mass)) + (2 * balls[j]->mass * n_velRJ)) / (balls[i]->mass + balls[j]->mass);
 
 				//convert scalers to vectors by multplying the normalised plane vectors and get vectors into a single vector in world space
 				normalPlaneJ->Multiply(n_velJ_after);
@@ -260,7 +261,7 @@ int main(int argc, char** argv)
 	srand(time(NULL));
 
 	for (int i = 0; i < NUMBALLS; i++){
-		balls[i] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, i);
+		balls[i] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, 10, i);
 		scene.addItem(balls[i]);
 		balls[i]->setPos(balls[i]->position->x, balls[i]->position->y);
 	}
