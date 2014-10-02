@@ -69,7 +69,7 @@ float Vector::Length()
 
 Vector* Vector::normalize(){
 	// look into doing this in a void way
-	Vector r = new Vector(0,0);
+	Vector* r = new Vector(0,0);
 	r->x=x/sqrt(x*x+y*y);
 	r->y=y/sqrt(x*x+y*y);
 	return r;
