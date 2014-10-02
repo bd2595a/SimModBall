@@ -23,12 +23,13 @@ public:
 	Vector* position;
 	Vector* velocity;
 	float radius;
+	float mass;
 	int id;
 
 
 	//position x,y , velocity x,y ,radius,id
 	Ball();
-	Ball(float, float, float, float, float, int);
+	Ball(float, float, float, float, float, float, int);
 	//draw
 	void printBall();
 	//move delta time  
