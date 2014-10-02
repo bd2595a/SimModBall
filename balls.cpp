@@ -169,16 +169,16 @@ void TimerHandler::onTimer()
 			if (dist->Length() < balls[j]->radius + balls[i]->radius){
 				float xoverlap = ( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->x / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) );
 				float yoverlap = ( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->y / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) );
-
+				float mi,mj;
 				if (balls[i]->mass != balls[j]->mass){
 					// move them apart proportional to mass
-					float mj=2;
-					float mi=2;
+					mj=2;
+					mi=2;
 				}
 				else{
 					// move them apart 1/2 each
-					float mj=2
-					float mj=2
+					mj=2;
+					mi=2;
 				}
 
 				if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y )
