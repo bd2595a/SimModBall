@@ -156,9 +156,9 @@ void TimerHandler::onTimer()
 
 			// COLLISION
 			// collide
-			if (dist->Length() < balls[j]->radius + balls[i]->radius){//correct for the overlap, then bounce them
-				float xoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->x / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
-				float yoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->y / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
+			if (dist->Length() < balls[j]->radius + balls[i]->radius){
+				float xoverlap = ( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->x / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) );
+				float yoverlap = ( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->y / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) );
 
 				if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y)
 				{	// Jx > IX && JY > IY
@@ -193,7 +193,8 @@ void TimerHandler::onTimer()
 				//	balls[j]->position->Sub(dist);
 				//}
 			}
-			if (dist->Length() <= balls[j]->radius + balls[i]->radius || bounce){
+			if (dist->Length() <= balls[j]->radius + balls[i]->radius  || bounce ){ 
+				//BOUCNE (calculate new velocity vectors)
 				//calculations for J's velocity
 				//calculate the normal plane 
 				float lengthJ = dist->Length();
