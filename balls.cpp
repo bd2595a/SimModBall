@@ -59,7 +59,7 @@ void Vector::Sub(Vector* vector)
 
 float Vector::DotProduct(Vector* vector2)
 {
-	return ((x*vector2->x)+(y*vector2->y));
+	return ((x*vector2->x) + (y*vector2->y));
 }
 
 float Vector::Length()
@@ -141,10 +141,10 @@ void TimerHandler::onTimer()
 		}
 
 		bool bounce = false;
-		
+
 		// CHECK AGAINST ALL OTHER BALLS
 		for (int i = j + 1; i < NUMBALLS; i++){
-			Vector* dist = new Vector(absJC(balls[j]->position->x - balls[i]->position->x),absJC(balls[j]->position->y - balls[i]->position->y));
+			Vector* dist = new Vector(absJC(balls[j]->position->x - balls[i]->position->x), absJC(balls[j]->position->y - balls[i]->position->y));
 
 			/*
 			//X overlap
@@ -157,39 +157,31 @@ void TimerHandler::onTimer()
 			// COLLISION
 			// collide
 			if (dist->Length() < balls[j]->radius + balls[i]->radius){//correct for the overlap, then bounce them
-				// BREE CODE
-				// dist->x /= 7;
-				// dist->y /= 7;
-				// balls[j]->position->Add(dist->x, dist->y);
-				// balls[i]->position->Sub(dist);
+				float xoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->x / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
+				float yoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->y / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
 
-				//JC Code
-				float xoverlap = ( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->x / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) );
-				float yoverlap = ( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->y / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) );
-
-				if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y )
+				if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y)
 				{	// Jx > IX && JY > IY
-					balls[j]->position->Add(xoverlap/2,yoverlap/2);
-					balls[i]->position->Add(xoverlap/-2,yoverlap/-2);
+					balls[j]->position->Add(xoverlap / 2, yoverlap / 2);
+					balls[i]->position->Add(xoverlap / -2, yoverlap / -2);
 				}
-				else if(balls[j]->position->x > balls[i]->position->x && balls[j]->position->y < balls[i]->position->y )
+				else if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y < balls[i]->position->y)
 				{	// JX > IX && JY < IY
-					balls[j]->position->Add(xoverlap/2,yoverlap/-2);
-					balls[i]->position->Add(xoverlap/-2,yoverlap/2);
+					balls[j]->position->Add(xoverlap / 2, yoverlap / -2);
+					balls[i]->position->Add(xoverlap / -2, yoverlap / 2);
 				}
-				else if(balls[j]->position->x < balls[i]->position->x && balls[j]->position->y > balls[i]->position->y )
+				else if (balls[j]->position->x < balls[i]->position->x && balls[j]->position->y > balls[i]->position->y)
 				{	// JX < IX && JY > IY
-					balls[j]->position->Add(xoverlap/-2,yoverlap/2);
-					balls[i]->position->Add(xoverlap/2,yoverlap/-2);
+					balls[j]->position->Add(xoverlap / -2, yoverlap / 2);
+					balls[i]->position->Add(xoverlap / 2, yoverlap / -2);
 				}
 				else //if(balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y ){
 				{	// JX > IX && JY > IY
-					balls[j]->position->Add(xoverlap/-2,yoverlap/-2);
-					balls[i]->position->Add(xoverlap/2,yoverlap/2);
+					balls[j]->position->Add(xoverlap / -2, yoverlap / -2);
+					balls[i]->position->Add(xoverlap / 2, yoverlap / 2);
 				}
 
 				bounce = true;
-
 				// OLD CODE
 				//if (balls[j]->position->x > balls[i]->position->x){
 				//	balls[j]->position->Add(dist->x, dist->y);
@@ -201,7 +193,7 @@ void TimerHandler::onTimer()
 				//	balls[j]->position->Sub(dist);
 				//}
 			}
-			if (dist->Length() <= balls[j]->radius + balls[i]->radius  || bounce){ 
+			if (dist->Length() <= balls[j]->radius + balls[i]->radius || bounce){
 				//calculations for J's velocity
 				//calculate the normal plane 
 				float lengthJ = dist->Length();
@@ -226,7 +218,7 @@ void TimerHandler::onTimer()
 				//calculate the scaler velocities of each object after the collision
 				float n_velJ_after = ((n_velRJ * (balls[j]->radius - balls[i]->radius)) + (2 * balls[i]->radius * n_velRI)) / (balls[i]->radius + balls[j]->radius);
 				float n_velI_after = ((n_velRI * (balls[i]->radius - balls[j]->radius)) + (2 * balls[j]->radius * n_velRJ)) / (balls[i]->radius + balls[j]->radius);
-			
+
 				//convert scalers to vectors by multplying the normalised plane vectors and get vectors into a single vector in world space
 				normalPlaneJ->Multiply(n_velJ_after);
 				collisionPlaneJ->Multiply(c_velRJ);
@@ -237,10 +229,8 @@ void TimerHandler::onTimer()
 
 
 				// Reapply the move-back from before the collision (using the post collision velocity)
-				balls[i]->position->Add(normalPlaneI);
-				balls[j]->position->Add(normalPlaneJ);
-				balls[i]->velocity = normalPlaneJ;
-				balls[j]->velocity = normalPlaneI;
+				balls[i]->velocity->Add(normalPlaneJ);
+				balls[j]->velocity->Add(normalPlaneI);
 			}
 		}
 	}
