@@ -181,22 +181,22 @@ void TimerHandler::onTimer()
 				if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y )
 				{	// Jx > IX && JY > IY
 					balls[j]->position->Add(xoverlap/2,yoverlap/2);
-					balls[j]->position->Add(xoverlap/-2,yoverlap/-2);
+					balls[i]->position->Add(xoverlap/-2,yoverlap/-2);
 				}
 				else if(balls[j]->position->x > balls[i]->position->x && balls[j]->position->y < balls[i]->position->y )
 				{	// JX > IX && JY < IY
 					balls[j]->position->Add(xoverlap/2,yoverlap/-2);
-					balls[j]->position->Add(xoverlap/-2,yoverlap/2);
+					balls[i]->position->Add(xoverlap/-2,yoverlap/2);
 				}
 				else if(balls[j]->position->x < balls[i]->position->x && balls[j]->position->y > balls[i]->position->y )
 				{	// JX < IX && JY > IY
 					balls[j]->position->Add(xoverlap/-2,yoverlap/2);
-					balls[j]->position->Add(xoverlap/2,yoverlap/-2);
+					balls[i]->position->Add(xoverlap/2,yoverlap/-2);
 				}
 				else //if(balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y ){
 				{	// JX > IX && JY > IY
 					balls[j]->position->Add(xoverlap/-2,yoverlap/-2);
-					balls[j]->position->Add(xoverlap/2,yoverlap/2);
+					balls[i]->position->Add(xoverlap/2,yoverlap/2);
 				}
 
 				// OLD CODE
