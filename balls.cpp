@@ -153,8 +153,7 @@ void TimerHandler::onTimer()
 
 		// CHECK AGAINST ALL OTHER BALLS
 		for (int i = j + 1; i < NUMBALLS; i++){
-			Vector* dist = new Vector(absJC(balls[j]->position->x - balls[i]->position->x), absJC(balls[j]->position->y - balls[i]->position->y));
-			bool bounce = false;
+			Vector* dist = new Vector(balls[j]->position->x - balls[i]->position->x, balls[j]->position->y - balls[i]->position->y);
 			/*
 			//X overlap
 			( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->x / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) )
@@ -165,51 +164,25 @@ void TimerHandler::onTimer()
 
 			// COLLISION
 			// collide
-			if (dist->Length() <= balls[j]->radius + balls[i]->radius){
-				//OVERLAP CODE
-				float xoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->x / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
-				float yoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->y / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
+	
+			if (dist->Length() <= balls[j]->radius + balls[i]->radius){	
+				//adjust position
+				float adjust = (balls[j]->radius + balls[i]->radius - dist->Length()) / dist->Length();
+				Vector* Xadjust = new Vector(dist->x, dist->y);
+				Xadjust->Multiply(adjust);
+				Vector* Xadjust1 = new Vector(Xadjust->x, Xadjust->y);
+				Vector* Xadjust2 = new Vector(Xadjust->x, Xadjust->y);
+				Xadjust1->Multiply(((1 / balls[j]->mass) / (1 / balls[j]->mass + 1 / balls[i]->mass)));
+				Xadjust2->Multiply(((1 / balls[i]->mass) / (1 / balls[j]->mass + 1 / balls[i]->mass)));
 
-				if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y)
-				{	// Jx > IX && JY > IY
-					balls[j]->position->Add(xoverlap / 2, yoverlap / 2);
-					balls[i]->position->Add(xoverlap / -2, yoverlap / -2);
-				}
-				else if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y < balls[i]->position->y)
-				{	// JX > IX && JY < IY
-					balls[j]->position->Add(xoverlap / 2, yoverlap / -2);
-					balls[i]->position->Add(xoverlap / -2, yoverlap / 2);
-				}
-				else if (balls[j]->position->x < balls[i]->position->x && balls[j]->position->y > balls[i]->position->y)
-				{	// JX < IX && JY > IY
-					balls[j]->position->Add(xoverlap / -2, yoverlap / 2);
-					balls[i]->position->Add(xoverlap / 2, yoverlap / -2);
-				}
-				else //if(balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y ){
-				{	// JX > IX && JY > IY
-					balls[j]->position->Add(xoverlap / -2, yoverlap / -2);
-					balls[i]->position->Add(xoverlap / 2, yoverlap / 2);
-				}
-
-				bounce = true;
-				// OLD CODE
-				//if (balls[j]->position->x > balls[i]->position->x){
-				//	balls[j]->position->Add(dist->x, dist->y);
-				//	balls[i]->position->Sub(dist);
-				//}
-				//else{
-				//	//move j right, move i left
-				//	balls[i]->position->Add(dist->x, dist->y);
-				//	balls[j]->position->Sub(dist);
-				//}
-			}
-			//BOUNCE (calculate new velocity vectors)	
-			if (dist->Length() <= balls[j]->radius + balls[i]->radius || bounce){	
-				dist->normalize();
-				Vector* velocitySub = new Vector(balls[j]->velocity->x, balls[j]->velocity->y);
-				velocitySub->Sub(balls[i]->velocity);
-				Vector* Vdiff = new Vector(velocitySub->x, velocitySub->y);
-				float vadjust = Vdiff->DotProduct(dist);
+				balls[j]->position->Add(Xadjust1);
+				balls[i]->position->Sub(Xadjust2);
+	
+				Vector* normCol = dist->normalize();
+				//adjust velocity
+				Vector* Vdiff = new Vector(balls[j]->velocity->x, balls[j]->velocity->y);
+				Vdiff->Sub(balls[i]->velocity);
+				float vadjust = Vdiff->DotProduct(normCol);
 				//delete Vdiff;
 				//delete velocitySub;
 
@@ -218,8 +191,8 @@ void TimerHandler::onTimer()
 				float vadjust2 = (1 + R) * vadjust *((1 / balls[i]->mass) / (1 / balls[j]->mass + 1 / balls[i]->mass));
 
 				//adjust each velocity vector using the collion angle scaled properly
-				Vector* xColAdjust1 = new Vector(dist->x, dist->y);
-				Vector* xColAdjust2 = new Vector(dist->x, dist->y);
+				Vector* xColAdjust1 = new Vector(normCol->x, normCol->y);
+				Vector* xColAdjust2 = new Vector(normCol->x, normCol->y);
 				xColAdjust1->Multiply(vadjust1);
 				xColAdjust2->Multiply(vadjust2);
 
