@@ -67,6 +67,13 @@ float Vector::Length()
 	return sqrt(((x)*(x)) + ((y)* (y)));
 }
 
+Vector* Vector::normalize(){
+	Vector r = new Vector(x,y);
+	r->x=r->x/sqrt(r->x*r->x+r->y*r->y);
+	r->y=r->y/sqrt(r->x*r->x+r->y*r->y);
+	return r;
+}
+
 // BALL
 Ball::Ball(){}
 
@@ -140,12 +147,12 @@ void TimerHandler::onTimer()
 			balls[j]->velocity->y = balls[j]->velocity->y * -1;
 		}
 
-		bool bounce = false;
+		
 
 		// CHECK AGAINST ALL OTHER BALLS
 		for (int i = j + 1; i < NUMBALLS; i++){
 			Vector* dist = new Vector(absJC(balls[j]->position->x - balls[i]->position->x), absJC(balls[j]->position->y - balls[i]->position->y));
-
+			bool bounce = false;
 			/*
 			//X overlap
 			( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->x / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) )
@@ -201,9 +208,9 @@ void TimerHandler::onTimer()
 				float lengthJ = dist->Length();
 				float xJ = balls[j]->velocity->x / lengthJ;
 				float yJ = balls[j]->velocity->y / lengthJ;
-				float lengthI = dist->Length();
-				float xI = balls[i]->velocity->x / lengthI;
-				float yI = balls[i]->velocity->y / lengthI;
+				// length I
+				float xI = balls[i]->velocity->x / lengthJ;
+				float yI = balls[i]->velocity->y / lengthJ;
 
 				Vector* normalPlaneJ = new Vector(xJ, yJ);
 				Vector* normalPlaneI = new Vector(xI, yI);
