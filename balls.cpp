@@ -7,7 +7,7 @@
 using namespace std;	//std::cout is annoying
 
 //GLOBALS
-const int NUMBALLS = 5;
+const int NUMBALLS = 10;
 Ball* balls[NUMBALLS];
 
 float absJC(float val)
@@ -156,12 +156,21 @@ void TimerHandler::onTimer()
 			if (same if statement as above except < instead of <= ){
 			// overlap stuff
 			}
-
+	
 			*/
 
-			balls[j]->position->Sub(balls[i]->position);
-			Vector* dist = new Vector(balls[j]->position->x,balls[j]->position->y);
-			balls[j]->position->Add(balls[i]->position->x, balls[i]->position->y);
+			Vector* dist = new Vector(abs(balls[j]->position->x - balls[i]->position->x),abs(balls[j]->position->y - balls[i]->position->y));
+
+			/*
+			//X overlap
+			( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->x / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) )
+
+			// Y overlap
+			( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->y / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) )
+
+			EACH ball should be moved [ X overlap / 2 , Y overlap / 2] away from the other
+			*/
+
 			// COLLISION
 			// collide
 			if (dist->Length() < balls[j]->radius + balls[i]->radius){//correct for the overlap, then bounce them
