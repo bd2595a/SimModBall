@@ -170,25 +170,36 @@ void TimerHandler::onTimer()
 				float xoverlap = ( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->x / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) );
 				float yoverlap = ( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->y / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) );
 
+				if (balls[i]->mass != balls[j]->mass){
+					// move them apart proportional to mass
+					float mj=2;
+					float mi=2;
+				}
+				else{
+					// move them apart 1/2 each
+					float mj=2
+					float mj=2
+				}
+
 				if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y )
 				{	// Jx > IX && JY > IY
-					balls[j]->position->Add(xoverlap/2,yoverlap/2);
-					balls[i]->position->Add(xoverlap/-2,yoverlap/-2);
+					balls[j]->position->Add(xoverlap/mj,yoverlap/mj);
+					balls[i]->position->Add(xoverlap/-mi,yoverlap/-mi);
 				}
 				else if(balls[j]->position->x > balls[i]->position->x && balls[j]->position->y < balls[i]->position->y )
 				{	// JX > IX && JY < IY
-					balls[j]->position->Add(xoverlap/2,yoverlap/-2);
-					balls[i]->position->Add(xoverlap/-2,yoverlap/2);
+					balls[j]->position->Add(xoverlap/mj,yoverlap/-mj);
+					balls[i]->position->Add(xoverlap/-mi,yoverlap/mi);
 				}
 				else if(balls[j]->position->x < balls[i]->position->x && balls[j]->position->y > balls[i]->position->y )
 				{	// JX < IX && JY > IY
-					balls[j]->position->Add(xoverlap/-2,yoverlap/2);
-					balls[i]->position->Add(xoverlap/2,yoverlap/-2);
+					balls[j]->position->Add(xoverlap/-mj,yoverlap/mj);
+					balls[i]->position->Add(xoverlap/mi,yoverlap/-mi);
 				}
 				else //if(balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y ){
 				{	// JX > IX && JY > IY
-					balls[j]->position->Add(xoverlap/-2,yoverlap/-2);
-					balls[i]->position->Add(xoverlap/2,yoverlap/2);
+					balls[j]->position->Add(xoverlap/-mj,yoverlap/-mj);
+					balls[i]->position->Add(xoverlap/mi,yoverlap/mi);
 				}
 
 				bounce = true;
