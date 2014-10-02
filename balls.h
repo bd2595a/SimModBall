@@ -15,6 +15,7 @@ public:
 	void Multiply(float);
 	float DotProduct(Vector*);
 	float Length();
+	Vector* normalize();
 };
 
 class Ball : public QGraphicsItem
