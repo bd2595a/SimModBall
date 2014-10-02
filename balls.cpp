@@ -140,21 +140,10 @@ void TimerHandler::onTimer()
 			balls[j]->velocity->y = balls[j]->velocity->y * -1;
 		}
 
-
+		bool bounce = false;
+		
 		// CHECK AGAINST ALL OTHER BALLS
 		for (int i = j + 1; i < NUMBALLS; i++){
-
-			/* PSEUDO CODE
-			against each ball[j] and ball[i]
-			Vector dist = new Vector( absJC(ball[j]->position->x - ball[i]->position->x ) , absJC(ball[j]->position->y - ball[i]->position->y )  )
-			if ( dist->length() <= ( ball[j]->radius + ball[i]->radius ) ){
-			collision stuff
-			}
-			if (same if statement as above except < instead of <= ){
-			// overlap stuff
-			}
-			*/
-
 			Vector* dist = new Vector(absJC(balls[j]->position->x - balls[i]->position->x),absJC(balls[j]->position->y - balls[i]->position->y));
 
 			/*
@@ -199,6 +188,8 @@ void TimerHandler::onTimer()
 					balls[i]->position->Add(xoverlap/2,yoverlap/2);
 				}
 
+				bounce = true;
+
 				// OLD CODE
 				//if (balls[j]->position->x > balls[i]->position->x){
 				//	balls[j]->position->Add(dist->x, dist->y);
@@ -210,7 +201,7 @@ void TimerHandler::onTimer()
 				//	balls[j]->position->Sub(dist);
 				//}
 			}
-			if (dist->Length() <= balls[j]->radius + balls[i]->radius){ 
+			if (dist->Length() <= balls[j]->radius + balls[i]->radius  || bounce){ 
 				//calculations for J's velocity
 				//calculate the normal plane 
 				float lengthJ = dist->Length();
