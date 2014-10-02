@@ -230,8 +230,8 @@ void TimerHandler::onTimer()
 
 
 				// Reapply the move-back from before the collision (using the post collision velocity)
-				balls[i]->velocity->Add(normalPlaneJ);
-				balls[j]->velocity->Sub(normalPlaneI);
+				balls[i]->velocity=(normalPlaneJ);
+				balls[j]->velocity=(normalPlaneI);
 			}
 		}
 	}
