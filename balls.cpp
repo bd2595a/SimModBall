@@ -9,6 +9,7 @@ using namespace std;	//std::cout is annoying
 //GLOBALS
 const int NUMBALLS = 10;
 Ball* balls[NUMBALLS];
+float R = 1.0;
 
 float absJC(float val)
 {
@@ -69,16 +70,16 @@ float Vector::Length()
 
 Vector* Vector::normalize(){
 	// look into doing this in a void way
-	Vector* r = new Vector(0,0);
-	r->x=x/sqrt(x*x+y*y);
-	r->y=y/sqrt(x*x+y*y);
+	Vector* r = new Vector(0, 0);
+	r->x = x / sqrt(x*x + y*y);
+	r->y = y / sqrt(x*x + y*y);
 	return r;
 }
 
 // BALL
 Ball::Ball(){}
 
-Ball::Ball(float px, float py, float vx, float vy, float r,float m, int i)
+Ball::Ball(float px, float py, float vx, float vy, float r, float m, int i)
 {
 	position = new Vector(px, py);
 	velocity = new Vector(vx, vy);
@@ -148,7 +149,7 @@ void TimerHandler::onTimer()
 			balls[j]->velocity->y = balls[j]->velocity->y * -1;
 		}
 
-		
+
 
 		// CHECK AGAINST ALL OTHER BALLS
 		for (int i = j + 1; i < NUMBALLS; i++){
@@ -164,10 +165,10 @@ void TimerHandler::onTimer()
 
 			// COLLISION
 			// collide
-			if (dist->Length() < balls[j]->radius + balls[i]->radius){
+			if (dist->Length() <= balls[j]->radius + balls[i]->radius){
 				//OVERLAP CODE
-				float xoverlap = ( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->x / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) );
-				float yoverlap = ( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->y / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) );
+				float xoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->x / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
+				float yoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->y / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
 
 				if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y)
 				{	// Jx > IX && JY > IY
@@ -202,45 +203,30 @@ void TimerHandler::onTimer()
 				//	balls[j]->position->Sub(dist);
 				//}
 			}
-			if (dist->Length() <= balls[j]->radius + balls[i]->radius  || bounce ){ 
-				//BOUCNE (calculate new velocity vectors)
-				//calculations for J's velocity
-				//calculate the normal plane 
-				float lengthJ = dist->Length();
-				float xJ = balls[j]->velocity->x / lengthJ;
-				float yJ = balls[j]->velocity->y / lengthJ;
-				// length I
-				float xI = balls[i]->velocity->x / lengthJ;
-				float yI = balls[i]->velocity->y / lengthJ;
+			//BOUNCE (calculate new velocity vectors)	
+			if (dist->Length() <= balls[j]->radius + balls[i]->radius || bounce){	
+				dist->normalize();
+				Vector* velocitySub = new Vector(balls[j]->velocity->x, balls[j]->velocity->y);
+				velocitySub->Sub(balls[i]->velocity);
+				Vector* Vdiff = new Vector(velocitySub->x, velocitySub->y);
+				float vadjust = Vdiff->DotProduct(dist);
+				//delete Vdiff;
+				//delete velocitySub;
 
-				Vector* normalPlaneJ = new Vector(xJ, yJ);
-				Vector* normalPlaneI = new Vector(xI, yI);
-				//calculate the collisionPlane
-				Vector* collisionPlaneJ = new Vector(-1 * normalPlaneJ->y, normalPlaneJ->x);
-				Vector* collisionPlaneI = new Vector(-1 * normalPlaneI->y, normalPlaneI->x);
-				//calculate prior velocities relative to the collisoin plane and normal
-				float n_velRJ = normalPlaneJ->DotProduct(balls[j]->velocity);
-				float c_velRJ = collisionPlaneJ->DotProduct(balls[j]->velocity);
-				float n_velRI = normalPlaneI->DotProduct(balls[i]->velocity);
-				float c_velRI = collisionPlaneI->DotProduct(balls[i]->velocity);
+				//determine how much each ball's velocity should change, according to the amss
+				float vadjust1 = (1 + R) * vadjust *((1 / balls[j]->mass) / (1 / balls[j]->mass + 1 / balls[i]->mass));
+				float vadjust2 = (1 + R) * vadjust *((1 / balls[i]->mass) / (1 / balls[j]->mass + 1 / balls[i]->mass));
 
+				//adjust each velocity vector using the collion angle scaled properly
+				Vector* xColAdjust1 = new Vector(dist->x, dist->y);
+				Vector* xColAdjust2 = new Vector(dist->x, dist->y);
+				xColAdjust1->Multiply(vadjust1);
+				xColAdjust2->Multiply(vadjust2);
 
-				//calculate the scaler velocities of each object after the collision
-				float n_velJ_after = ((n_velRJ * (balls[j]->mass - balls[i]->mass)) + (2 * balls[i]->mass * n_velRI)) / (balls[i]->mass + balls[j]->mass);
-				float n_velI_after = ((n_velRI * (balls[i]->mass - balls[j]->mass)) + (2 * balls[j]->mass * n_velRJ)) / (balls[i]->mass + balls[j]->mass);
-
-				//convert scalers to vectors by multplying the normalised plane vectors and get vectors into a single vector in world space
-				normalPlaneJ->Multiply(n_velJ_after);
-				collisionPlaneJ->Multiply(c_velRJ);
-				normalPlaneJ->Add(collisionPlaneJ);
-				normalPlaneI->Multiply(n_velI_after);
-				collisionPlaneI->Multiply(c_velRI);
-				normalPlaneI->Add(collisionPlaneI);
-
-
-				// Reapply the move-back from before the collision (using the post collision velocity)
-				balls[i]->velocity=(normalPlaneJ);
-				balls[j]->velocity=(normalPlaneI);
+				balls[j]->velocity->Sub(xColAdjust1);
+				balls[i]->velocity->Add(xColAdjust2);
+				//delete xColAdjust1;
+				//delete xColAdjust2;
 			}
 		}
 	}
