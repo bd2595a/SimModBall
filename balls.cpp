@@ -68,9 +68,10 @@ float Vector::Length()
 }
 
 Vector* Vector::normalize(){
-	Vector r = new Vector(x,y);
-	r->x=r->x/sqrt(r->x*r->x+r->y*r->y);
-	r->y=r->y/sqrt(r->x*r->x+r->y*r->y);
+	// look into doing this in a void way
+	Vector r = new Vector(0,0);
+	r->x=x/sqrt(x*x+y*y);
+	r->y=y/sqrt(x*x+y*y);
 	return r;
 }
 
