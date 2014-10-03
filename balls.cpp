@@ -172,34 +172,34 @@ void TimerHandler::onTimer()
 				float mi,mj;
 				if (balls[i]->mass != balls[j]->mass){
 					// move them apart proportional to mass
-					mj=2;
-					mi=2;
+					mj = balls[i]->mass / ( balls[i]->mass + balls[j]->mass );
+					mi = balls[j]->mass / ( balls[i]->mass + balls[j]->mass );
 				}
-				else{
+				else{ 
 					// move them apart 1/2 each
-					mj=2;
-					mi=2;
+					mj=0.5;
+					mi=0.5;
 				}
 
 				if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y )
 				{	// Jx > IX && JY > IY
-					balls[j]->position->Add(xoverlap/mj,yoverlap/mj);
-					balls[i]->position->Add(xoverlap/-mi,yoverlap/-mi);
+					balls[j]->position->Add(xoverlap*mj,yoverlap*mj);
+					balls[i]->position->Add(xoverlap*-mi,yoverlap*-mi);
 				}
 				else if(balls[j]->position->x > balls[i]->position->x && balls[j]->position->y < balls[i]->position->y )
 				{	// JX > IX && JY < IY
-					balls[j]->position->Add(xoverlap/mj,yoverlap/-mj);
-					balls[i]->position->Add(xoverlap/-mi,yoverlap/mi);
+					balls[j]->position->Add(xoverlap*mj,yoverlap*-mj);
+					balls[i]->position->Add(xoverlap*-mi,yoverlap*mi);
 				}
 				else if(balls[j]->position->x < balls[i]->position->x && balls[j]->position->y > balls[i]->position->y )
 				{	// JX < IX && JY > IY
-					balls[j]->position->Add(xoverlap/-mj,yoverlap/mj);
-					balls[i]->position->Add(xoverlap/mi,yoverlap/-mi);
+					balls[j]->position->Add(xoverlap*-mj,yoverlap*mj);
+					balls[i]->position->Add(xoverlap*mi,yoverlap*-mi);
 				}
 				else //if(balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y ){
 				{	// JX > IX && JY > IY
-					balls[j]->position->Add(xoverlap/-mj,yoverlap/-mj);
-					balls[i]->position->Add(xoverlap/mi,yoverlap/mi);
+					balls[j]->position->Add(xoverlap*-mj,yoverlap*-mj);
+					balls[i]->position->Add(xoverlap*mi,yoverlap*mi);
 				}
 
 				bounce = true;
