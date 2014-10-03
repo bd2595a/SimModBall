@@ -169,32 +169,40 @@ void TimerHandler::onTimer()
 				//OVERLAP CODE
 				float xoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->x / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
 				float yoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->y / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
-				float mb = 0.5;
+				float mj, mi;
+				if(balls[j]->mass != balls[i]->mass){
+					mj= balls[j]->mass / (balls[j]->mass + balls[i]->mass);
+					mi= balls[i]->mass / (balls[j]->mass + balls[i]->mass);
+				}
+				else{
+					mj = 0.5;
+					mi = 0.5;
+				}
 
 				if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y)
 				{	// Jx > IX && JY > IY
-					balls[j]->position->Add(xoverlap * mb, yoverlap * mb);
-					balls[i]->position->Add(xoverlap * -mb , yoverlap * -mb);
+					balls[j]->position->Add(xoverlap * mj, yoverlap * mj);
+					balls[i]->position->Add(xoverlap * -mi , yoverlap * -mi);
 				}
 				else if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y < balls[i]->position->y)
 				{	// JX > IX && JY < IY
-					balls[j]->position->Add(xoverlap * mb, yoverlap * -mb);
-					balls[i]->position->Add(xoverlap * mb, yoverlap * -mb);
+					balls[j]->position->Add(xoverlap * mj, yoverlap * -mj);
+					balls[i]->position->Add(xoverlap * mi, yoverlap * -mi);
 				}
 				else if (balls[j]->position->x < balls[i]->position->x && balls[j]->position->y > balls[i]->position->y)
 				{	// JX < IX && JY > IY
-					balls[j]->position->Add(xoverlap * -mb, yoverlap * mb);
-					balls[i]->position->Add(xoverlap * mb, yoverlap * -mb);
+					balls[j]->position->Add(xoverlap * -mj, yoverlap * mj);
+					balls[i]->position->Add(xoverlap * mi, yoverlap * -mi);
 				}
 				else //if(balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y ){
 				{	// JX > IX && JY > IY
-					balls[j]->position->Add(xoverlap * -mb, yoverlap *-mb);
-					balls[i]->position->Add(xoverlap * mb, yoverlap *mb);
+					balls[j]->position->Add(xoverlap * -mj, yoverlap *-mj);
+					balls[i]->position->Add(xoverlap * mi, yoverlap *mi);
 				}
 
 				bounce = true;
 			}
-			/*
+			//*
 			if (dist->Length() <= balls[j]->radius + balls[i]->radius  || bounce){	
 				Vector* normCol = dist->normalize();
 				//adjust velocity
@@ -219,7 +227,7 @@ void TimerHandler::onTimer()
 				//delete xColAdjust1;
 				//delete xColAdjust2;
 			}
-			*/
+			//*/
 		}
 	}
 
