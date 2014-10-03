@@ -38,7 +38,7 @@ Vector::Vector(float xVal, float yVal)
 }
 void Vector::Add(Vector* vector){
 	x += vector->x;
-	y -= vector->y;
+	y += vector->y;
 }
 
 void Vector::Add(float tx, float ty){
@@ -206,8 +206,8 @@ void TimerHandler::onTimer()
 			if (dist->Length() <= balls[j]->radius + balls[i]->radius  || bounce){	
 				Vector* normCol = dist->normalize();
 				//adjust velocity
-				Vector* Vdiff = new Vector(balls[j]->velocity->x, balls[j]->velocity->y);
-				Vdiff->Sub(balls[i]->velocity);
+				Vector* Vdiff = new Vector(balls[i]->velocity->x, balls[i]->velocity->y);
+				Vdiff->Sub(balls[j]->velocity);
 				float vadjust = Vdiff->DotProduct(normCol);
 				//delete Vdiff;
 				//delete velocitySub;
