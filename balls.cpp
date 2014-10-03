@@ -153,7 +153,8 @@ void TimerHandler::onTimer()
 
 		// CHECK AGAINST ALL OTHER BALLS
 		for (int i = j + 1; i < NUMBALLS; i++){
-			Vector* dist = new Vector(balls[j]->position->x - balls[i]->position->x, balls[j]->position->y - balls[i]->position->y);
+			Vector* dist = new Vector(absJC(balls[j]->position->x - balls[i]->position->x), absJC(balls[j]->position->y - balls[i]->position->y));
+			bool bounce = false;
 			/*
 			//X overlap
 			( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->x / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) )
@@ -164,42 +165,30 @@ void TimerHandler::onTimer()
 
 			// COLLISION
 			// collide
-			bool bounce = false;
-			
-			if (dist->Length() < balls[j]->radius + balls[i]->radius){
-				float xoverlap = ( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->x / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) );
-				float yoverlap = ( ( balls[i]->radius + balls[j]->radius ) - sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) ) * ( dist->y / sqrt( ( dist->x * dist->x ) + ( dist->y * dist->y ) ) );
-				float mi,mj;
-				if (balls[i]->mass != balls[j]->mass){
-					// move them apart proportional to mass
-					mj = balls[i]->mass / ( balls[i]->mass + balls[j]->mass );
-					mi = balls[j]->mass / ( balls[i]->mass + balls[j]->mass );
-				}
-				else{ 
-					// move them apart 1/2 each
-					mj=0.5;
-					mi=0.5;
-				}
+			if (dist->Length() <= balls[j]->radius + balls[i]->radius){
+				//OVERLAP CODE
+				float xoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->x / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
+				float yoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->y / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
 
-				if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y )
+				if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y)
 				{	// Jx > IX && JY > IY
-					balls[j]->position->Add(xoverlap*mj,yoverlap*mj);
-					balls[i]->position->Add(xoverlap*-mi,yoverlap*-mi);
+					balls[j]->position->Add(xoverlap / 2, yoverlap / 2);
+					balls[i]->position->Add(xoverlap / -2, yoverlap / -2);
 				}
-				else if(balls[j]->position->x > balls[i]->position->x && balls[j]->position->y < balls[i]->position->y )
+				else if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y < balls[i]->position->y)
 				{	// JX > IX && JY < IY
-					balls[j]->position->Add(xoverlap*mj,yoverlap*-mj);
-					balls[i]->position->Add(xoverlap*-mi,yoverlap*mi);
+					balls[j]->position->Add(xoverlap / 2, yoverlap / -2);
+					balls[i]->position->Add(xoverlap / -2, yoverlap / 2);
 				}
-				else if(balls[j]->position->x < balls[i]->position->x && balls[j]->position->y > balls[i]->position->y )
+				else if (balls[j]->position->x < balls[i]->position->x && balls[j]->position->y > balls[i]->position->y)
 				{	// JX < IX && JY > IY
-					balls[j]->position->Add(xoverlap*-mj,yoverlap*mj);
-					balls[i]->position->Add(xoverlap*mi,yoverlap*-mi);
+					balls[j]->position->Add(xoverlap / -2, yoverlap / 2);
+					balls[i]->position->Add(xoverlap / 2, yoverlap / -2);
 				}
 				else //if(balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y ){
 				{	// JX > IX && JY > IY
-					balls[j]->position->Add(xoverlap*-mj,yoverlap*-mj);
-					balls[i]->position->Add(xoverlap*mi,yoverlap*mi);
+					balls[j]->position->Add(xoverlap / -2, yoverlap / -2);
+					balls[i]->position->Add(xoverlap / 2, yoverlap / 2);
 				}
 
 				bounce = true;
