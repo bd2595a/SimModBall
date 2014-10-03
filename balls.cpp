@@ -60,12 +60,12 @@ void Vector::Sub(Vector* vector)
 
 float Vector::DotProduct(Vector* vector2)
 {
-	return ((x*vector2->x) + (y*vector2->y));
+	return (x*vector2->x + y*vector2->y);
 }
 
 float Vector::Length()
 {
-	return sqrt(((x)*(x)) + ((y)* (y)));
+	return sqrt(x*x + y* y);
 }
 
 Vector* Vector::normalize(){
@@ -92,7 +92,7 @@ void Ball::printBall()
 }
 void Ball::move(float dt)
 {
-	position->Add(((velocity->x)*dt), ((velocity->y)*dt));
+	position->Add(velocity->x*dt, velocity->y*dt);
 }
 
 //specify where to update screen here
@@ -165,7 +165,7 @@ void TimerHandler::onTimer()
 
 			// COLLISION
 			// collide
-			if (dist->Length() <= balls[j]->radius + balls[i]->radius){
+			if (dist->Length() < balls[j]->radius + balls[i]->radius){
 				//OVERLAP CODE
 				float xoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->x / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
 				float yoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->y / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
@@ -206,8 +206,8 @@ void TimerHandler::onTimer()
 			if (dist->Length() <= balls[j]->radius + balls[i]->radius  || bounce){	
 				Vector* normCol = dist->normalize();
 				//adjust velocity
-				Vector* Vdiff = new Vector(balls[i]->velocity->x, balls[i]->velocity->y);
-				Vdiff->Sub(balls[j]->velocity);
+				Vector* Vdiff = new Vector(balls[j]->velocity->x, balls[j]->velocity->y);
+				Vdiff->Sub(balls[i]->velocity);
 				float vadjust = Vdiff->DotProduct(normCol);
 				//delete Vdiff;
 				//delete velocitySub;
