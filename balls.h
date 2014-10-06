@@ -47,7 +47,7 @@ public:
 	int id;
 	Link();
 	Link(Ball,Ball,int);
-	contract();
+	void contract();
 
 };
 

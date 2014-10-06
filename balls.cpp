@@ -95,6 +95,9 @@ void Ball::move(float dt)
 	position->Add(velocity->x*dt, velocity->y*dt);
 }
 
+//LINK
+
+
 //specify where to update screen here
 QRectF Ball::boundingRect() const
 {
