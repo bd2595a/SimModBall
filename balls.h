@@ -39,6 +39,15 @@ public:
 	QRectF boundingRect() const;
 	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget *widget);
 
+};
+
+class Link : public QGraphicsItem
+{
+public:
+	int id;
+	Link();
+	Link(Ball,Ball,int);
+	contract();
 
 };
 
