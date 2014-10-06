@@ -95,7 +95,7 @@ void Ball::move(float dt)
 	position->Add(velocity->x*dt, velocity->y*dt);
 }
 
-//LINK
+//LINKages
 
 
 //specify where to update screen here
@@ -110,6 +110,12 @@ void Ball::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 	painter->drawEllipse(-radius, -radius, 2 * radius, 2 * radius);
 }
 
+//drawing goes here
+void Link::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
+{
+	painter->drawLine(50, 50, 450, 450);
+}
+
 // TIMERHANDLER
 TimerHandler::TimerHandler(int t)
 {
@@ -122,6 +128,7 @@ TimerHandler::TimerHandler(int t)
 void TimerHandler::onTimer()
 {
 	//move code goes here
+
 
 	// MOVE THE BALLS
 	for (int p = 0; p < NUMBALLS; p++){

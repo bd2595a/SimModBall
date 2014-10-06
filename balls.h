@@ -45,10 +45,11 @@ class Link : public QGraphicsItem
 {
 public:
 	int id;
+	int ball[];
 	Link();
 	Link(Ball,Ball,int);
 	void contract();
-
+	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget *widget);
 };
 
 //like a Runnable subclass
