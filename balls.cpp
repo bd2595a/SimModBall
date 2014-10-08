@@ -10,6 +10,8 @@ using namespace std;	//std::cout is annoying
 const int NUMBALLS = 10;
 Ball* balls[NUMBALLS];
 float R = 1.0;
+QGraphicsScene* scene;//canvas
+BallView* view;	//the window
 
 float absJC(float val)
 {
@@ -99,7 +101,6 @@ void Ball::move(float dt)
 Link::Link(){}
 
 Link::Link(int b1num,int b2num,int idnum){
-	ball = new int[2];
 	ball[0] = b1num;
 	ball[1] = b2num;
 	id = idnum;
@@ -226,8 +227,7 @@ void TimerHandler::onTimer()
 				Vector* Vdiff = new Vector(balls[j]->velocity->x, balls[j]->velocity->y);
 				Vdiff->Sub(balls[i]->velocity);
 				float vadjust = Vdiff->DotProduct(normCol);
-				//delete Vdiff;
-				//delete velocitySub;
+				delete Vdiff;
 
 				//determine how much each ball's velocity should change, according to the amss
 				float vadjust1 = (1 + R) * vadjust *((1 / balls[j]->mass) / (1 / balls[j]->mass + 1 / balls[i]->mass));
@@ -241,8 +241,8 @@ void TimerHandler::onTimer()
 
 				balls[j]->velocity->Sub(xColAdjust1);
 				balls[i]->velocity->Add(xColAdjust2);
-				//delete xColAdjust1;
-				//delete xColAdjust2;
+				delete xColAdjust1;
+				delete xColAdjust2;
 			}
 			//*/
 		}
@@ -253,6 +253,36 @@ void TimerHandler::onTimer()
 		balls[d]->setPos(balls[d]->position->x, balls[d]->position->y);
 	}
 
+}
+
+//constructor for the window.  you can leave it empty if you want.
+BallView::BallView(QGraphicsScene *scene, QWidget* parent) :QGraphicsView(scene, parent)
+{
+}
+
+//this is called when the mouse is pressed.  use it if you want.
+void BallView::mousePressEvent(QMouseEvent *event)
+{
+	//TODO: on mouse pressed...
+}
+
+//this is called when the mouse is released.  use it if you want.
+void BallView::mouseReleaseEvent(QMouseEvent *event)
+{
+	//TODO: on mouse released...
+}
+
+//this is called when the mouse is doubleclicked.
+//currently I have it just creating a new ball at that point
+//you can remove that and change this to whatever you like
+void BallView::mouseDoubleClickEvent(QMouseEvent *event)
+{
+	//TODO: modify this if you want to...
+
+	if (event->button() == Qt::LeftButton)
+	{
+		
+	}
 }
 
 /////////////////////////////////
@@ -266,22 +296,22 @@ int main(int argc, char** argv)
 	//jframe
 	QApplication app(argc, argv);
 	//panel
-	QGraphicsScene scene;
 	//set window size to 500,500
-	scene.setSceneRect(0, 0, 500, 500);
+	scene = new QGraphicsScene();
+	scene->setSceneRect(0, 0, 500, 500);
 	srand(time(NULL));
 
 	for (int i = 0; i < NUMBALLS; i++){
 		balls[i] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, 10, i);
-		scene.addItem(balls[i]);
+		scene->addItem(balls[i]);
 		balls[i]->setPos(balls[i]->position->x, balls[i]->position->y);
 	}
-
-	QGraphicsView view(&scene);
-	view.setWindowTitle("Balls JC");
-	view.resize(500, 500);
+	view = new BallView(scene);
+	view->setWindowTitle("Balls JC & Bree");
+	view->resize(500, 500);
+	view->setMouseTracking(true);
 	//setVisible true
-	view.show();
+	view->show();
 
 	//1000 milliseconds / frames-per-second
 	TimerHandler timer(1000 / 66);

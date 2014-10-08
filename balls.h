@@ -45,7 +45,7 @@ class Link : public QGraphicsItem
 {
 public:
 	int id;
-	int ball[];
+	int ball[2];
 	Link();
 	Link(int,int,int);
 	//ball 1 index, ball 2 index, ID
@@ -65,3 +65,16 @@ public:
 
 
 
+class QGraphicsScene;
+
+class BallView : public QGraphicsView
+{
+	Q_OBJECT
+public:
+	BallView(QGraphicsScene*, QWidget*x = NULL);
+	int pressX, pressY;
+protected:
+	void mousePressEvent(QMouseEvent *event);
+	void mouseDoubleClickEvent(QMouseEvent *event);
+	void mouseReleaseEvent(QMouseEvent *event);
+};
