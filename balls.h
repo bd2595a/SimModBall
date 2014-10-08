@@ -47,7 +47,8 @@ public:
 	int id;
 	int ball[];
 	Link();
-	Link(Ball,Ball,int);
+	Link(int,int,int);
+	//ball 1 index, ball 2 index, ID
 	void contract();
 	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget *widget);
 };

@@ -96,7 +96,14 @@ void Ball::move(float dt)
 }
 
 //LINKages
+Link::Link(){}
 
+Link::Link(int b1num,int b2num,int idnum){
+	ball = new int[2];
+	ball[0] = b1num;
+	ball[1] = b2num;
+	id = idnum;
+}
 
 //specify where to update screen here
 QRectF Ball::boundingRect() const
