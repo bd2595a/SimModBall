@@ -9,8 +9,12 @@ using namespace std;	//std::cout is annoying
 
 //GLOBALS
 const int NUMBALLS = 10;
+int ball1ID = -1;
+int linkID = 0;
 Ball* balls[NUMBALLS];
 float R = 1.0;
+QGraphicsScene* scene;//canvas
+BallView* view;	//the window
 
 bool timestop = false;
 
@@ -105,6 +109,7 @@ Link::Link(int b1num,int b2num,int idnum){
 	ball[0] = b1num;
 	ball[1] = b2num;
 	id = idnum;
+	linkID++;
 }
 
 // KEYPRESS
@@ -145,6 +150,13 @@ void Ball::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
 	painter->drawEllipse(-radius, -radius, 2 * radius, 2 * radius);
 }
+
+//specify where to update screen here
+QRectF Link::boundingRect() const
+{
+	return QRectF(balls[ball[0]]->position->x, balls[ball[0]]->position->y, 10, 10);
+}
+
 
 //drawing goes here
 void Link::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
@@ -265,8 +277,7 @@ void TimerHandler::onTimer()
 				Vector* Vdiff = new Vector(balls[j]->velocity->x, balls[j]->velocity->y);
 				Vdiff->Sub(balls[i]->velocity);
 				float vadjust = Vdiff->DotProduct(normCol);
-				//delete Vdiff;
-				//delete velocitySub;
+				delete Vdiff;
 
 				//determine how much each ball's velocity should change, according to the amss
 				float vadjust1 = (1 + R) * vadjust *((1 / balls[j]->mass) / (1 / balls[j]->mass + 1 / balls[i]->mass));
@@ -280,8 +291,8 @@ void TimerHandler::onTimer()
 
 				balls[j]->velocity->Sub(xColAdjust1);
 				balls[i]->velocity->Add(xColAdjust2);
-				//delete xColAdjust1;
-				//delete xColAdjust2;
+				delete xColAdjust1;
+				delete xColAdjust2;
 			}
 			//*/
 		}
@@ -294,6 +305,58 @@ void TimerHandler::onTimer()
 
 }
 
+//constructor for the window.  you can leave it empty if you want.
+BallView::BallView(QGraphicsScene *scene, QWidget* parent) :QGraphicsView(scene, parent)
+{
+}
+
+//this is called when the mouse is pressed.  use it if you want.
+void BallView::mousePressEvent(QMouseEvent *event)
+{
+	//TODO: on mouse pressed...
+	if (event->button() == Qt::LeftButton)
+	{
+		if (ball1ID == -1)//if we haven't already selected a ball
+		{
+			int counter = 0;//THIS STATEMENT NEEDS TO BE HERE
+			for (counter = 0; counter < NUMBALLS; counter++)//see if we actually selected a ball
+			{
+				if (event->x() >= balls[counter]->position->x - balls[counter]->radius && event->x() <= balls[counter]->position->x + balls[counter]->radius && event->y() >= balls[counter]->position->y - balls[counter]->radius && event->y() <= balls[counter]->position->y + balls[counter]->radius)
+				{
+					ball1ID = counter;
+					break;
+				}
+			}
+		}
+		else if (ball1ID != -1)//we've already selected one ball, so now we find the position of the next ball we clicked
+		{
+			for (int i = 0; i < NUMBALLS; i++)//see if we actually selected a ball
+			{
+				if (event->x() >= balls[i]->position->x - balls[i]->radius && event->x() <= balls[i]->position->x + balls[i]->radius && event->y() >= balls[i]->position->y - balls[i]->radius && event->y() <= balls[i]->position->y + balls[i]->radius)
+				{
+					new Link(ball1ID, i, linkID);
+					ball1ID = -1;
+					break;
+				}
+			}
+		}
+	}
+}
+
+//this is called when the mouse is released.  use it if you want.
+void BallView::mouseReleaseEvent(QMouseEvent *event)
+{
+	//TODO: on mouse released...
+}
+
+//this is called when the mouse is doubleclicked.
+//currently I have it just creating a new ball at that point
+//you can remove that and change this to whatever you like
+void BallView::mouseDoubleClickEvent(QMouseEvent *event)
+{
+	//TODO: modify this if you want to...
+}
+
 /////////////////////////////////
 //           M A I N           //
 /////////////////////////////////
@@ -304,25 +367,27 @@ int main(int argc, char** argv)
 	//jframe
 	QApplication app(argc, argv);
 	//panel
-	QGraphicsScene scene;
 	//set window size to 500,500
-	scene.setSceneRect(0, 0, 500, 500);
+	scene = new QGraphicsScene();
+	scene->setSceneRect(0, 0, 500, 500);
 	srand(time(NULL));
 
 	for (int i = 0; i < NUMBALLS; i++){
 		balls[i] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, 10, i);
-		scene.addItem(balls[i]);
+		scene->addItem(balls[i]);
 		balls[i]->setPos(balls[i]->position->x, balls[i]->position->y);
 	}
+
 
  	KeyPress *keyPress = new KeyPress();
     keyPress->show();
 
-	QGraphicsView view(&scene);
-	view.setWindowTitle("Balls JC");
-	view.resize(500, 500);
+	view = new BallView(scene);
+	view->setWindowTitle("Balls JC & Bree");
+	view->resize(500, 500);
+	view->setMouseTracking(true);
 	//setVisible true
-	view.show();
+	view->show();
 
 
 
