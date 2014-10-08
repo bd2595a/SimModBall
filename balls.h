@@ -50,6 +50,7 @@ public:
 	Link(int,int,int);
 	//ball 1 index, ball 2 index, ID
 	void contract();
+	QRectF boundingRect() const;
 	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget *widget);
 };
 
