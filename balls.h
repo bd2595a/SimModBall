@@ -45,12 +45,28 @@ class Link : public QGraphicsItem
 {
 public:
 	int id;
-	int ball[];
+	int ball[2];
 	Link();
 	Link(int,int,int);
 	//ball 1 index, ball 2 index, ID
 	void contract();
 	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget *widget);
+};
+
+class KeyPress : public QWidget
+{
+    Q_OBJECT
+public:
+    KeyPress(QWidget *parent = 0);
+ 	// QLabel *myLabel;
+protected:
+    void keyPressEvent(QKeyEvent *);
+    void keyReleaseEvent(QKeyEvent *);
+ 
+private:
+    QLabel *myLabel;
+    QVBoxLayout *mainLayout;
+    //http://programmingexamples.wikidot.com/qt-events
 };
 
 //like a Runnable subclass

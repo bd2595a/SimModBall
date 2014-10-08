@@ -1,5 +1,6 @@
 #include <iostream>
 #include <QtWidgets>
+#include <QKeyEvent>
 #include "balls.h"
 #include <time.h>
 #include <math.h>
@@ -10,6 +11,8 @@ using namespace std;	//std::cout is annoying
 const int NUMBALLS = 10;
 Ball* balls[NUMBALLS];
 float R = 1.0;
+
+bool timestop = false;
 
 float absJC(float val)
 {
@@ -99,10 +102,36 @@ void Ball::move(float dt)
 Link::Link(){}
 
 Link::Link(int b1num,int b2num,int idnum){
-	ball = new int[2];
 	ball[0] = b1num;
 	ball[1] = b2num;
 	id = idnum;
+}
+
+// KEYPRESS
+
+KeyPress::KeyPress(QWidget *parent) : QWidget(parent)
+{
+    myLabel = new QLabel("LABEL");
+    mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(myLabel);
+    setLayout(mainLayout);
+ 
+}
+ 
+void KeyPress::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Space)
+    {
+        myLabel->setText("You pressed SPACE");
+    }
+}
+ 
+void KeyPress::keyReleaseEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Space)
+    {
+        myLabel->setText("You released SPACE");
+    }
 }
 
 //specify where to update screen here
@@ -134,9 +163,18 @@ TimerHandler::TimerHandler(int t)
 //update frame function - this is called repeatedly by the system
 void TimerHandler::onTimer()
 {
-	//move code goes here
-
-
+	/*
+	case Qt::Key_Space:
+	{
+		if (timestop)
+			timestop = false;
+		else //timestop
+			timestop = true;
+	}
+	if(timestop){
+		return
+	}
+	*/
 	// MOVE THE BALLS
 	for (int p = 0; p < NUMBALLS; p++){
 		balls[p]->move(1);
@@ -184,6 +222,7 @@ void TimerHandler::onTimer()
 			// collide
 			if (dist->Length() < balls[j]->radius + balls[i]->radius){
 				//OVERLAP CODE
+				//TODO: TRANSLATE INTO VECTORS.
 				float xoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->x / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
 				float yoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->y / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
 				float mj, mi;
@@ -261,8 +300,7 @@ void TimerHandler::onTimer()
 
 int main(int argc, char** argv)
 {
-	cout << sqrt(2) << endl;
-
+	
 	//jframe
 	QApplication app(argc, argv);
 	//panel
@@ -277,11 +315,18 @@ int main(int argc, char** argv)
 		balls[i]->setPos(balls[i]->position->x, balls[i]->position->y);
 	}
 
+ 	KeyPress *keyPress = new KeyPress();
+    keyPress->show();
+
 	QGraphicsView view(&scene);
 	view.setWindowTitle("Balls JC");
 	view.resize(500, 500);
 	//setVisible true
 	view.show();
+
+
+
+
 
 	//1000 milliseconds / frames-per-second
 	TimerHandler timer(1000 / 66);
