@@ -54,22 +54,6 @@ public:
 	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget *widget);
 };
 
-class KeyPress : public QWidget
-{
-    Q_OBJECT
-public:
-    KeyPress(QWidget *parent = 0);
- 	// QLabel *myLabel;
-protected:
-    void keyPressEvent(QKeyEvent *);
-    void keyReleaseEvent(QKeyEvent *);
- 
-private:
-    QLabel *myLabel;
-    QVBoxLayout *mainLayout;
-    //http://programmingexamples.wikidot.com/qt-events
-};
-
 //like a Runnable subclass
 class TimerHandler : public QObject
 {
@@ -88,10 +72,13 @@ class BallView : public QGraphicsView
 {
 	Q_OBJECT
 public:
+
 	BallView(QGraphicsScene*, QWidget*x = NULL);
 	int pressX, pressY;
 protected:
 	void mousePressEvent(QMouseEvent *event);
 	void mouseDoubleClickEvent(QMouseEvent *event);
 	void mouseReleaseEvent(QMouseEvent *event);
+	void keyPressEvent(QKeyEvent *event);
+	void keyReleaseEvent(QKeyEvent *event);
 };

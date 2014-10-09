@@ -105,7 +105,7 @@ void Ball::move(float dt)
 //LINKages
 Link::Link(){}
 
-Link::Link(int b1num,int b2num,int idnum){
+Link::Link(int b1num, int b2num, int idnum){
 	ball[0] = b1num;
 	ball[1] = b2num;
 	id = idnum;
@@ -114,29 +114,21 @@ Link::Link(int b1num,int b2num,int idnum){
 
 // KEYPRESS
 
-KeyPress::KeyPress(QWidget *parent) : QWidget(parent)
+
+void BallView::keyPressEvent(QKeyEvent *event)
 {
-    myLabel = new QLabel("LABEL");
-    mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(myLabel);
-    setLayout(mainLayout);
- 
+	if (event->key() == Qt::Key_Space)
+	{
+	}
 }
- 
-void KeyPress::keyPressEvent(QKeyEvent *event)
+
+void BallView::keyReleaseEvent(QKeyEvent *event)//putting this code in release because space can be pressed and hold, whilst it can only be released once
+
 {
-    if(event->key() == Qt::Key_Space)
-    {
-        myLabel->setText("You pressed SPACE");
-    }
-}
- 
-void KeyPress::keyReleaseEvent(QKeyEvent *event)
-{
-    if(event->key() == Qt::Key_Space)
-    {
-        myLabel->setText("You released SPACE");
-    }
+	if (event->key() == Qt::Key_Space)
+	{
+		timestop = timestop == true? false: true;//this says "is timestop == true? then set it to false. else, set it to true."
+	}
 }
 
 //specify where to update screen here
@@ -175,18 +167,10 @@ TimerHandler::TimerHandler(int t)
 //update frame function - this is called repeatedly by the system
 void TimerHandler::onTimer()
 {
-	/*
-	case Qt::Key_Space:
-	{
-		if (timestop)
-			timestop = false;
-		else //timestop
-			timestop = true;
-	}
 	if(timestop){
-		return
+		return;
 	}
-	*/
+
 	// MOVE THE BALLS
 	for (int p = 0; p < NUMBALLS; p++){
 		balls[p]->move(1);
@@ -238,9 +222,9 @@ void TimerHandler::onTimer()
 				float xoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->x / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
 				float yoverlap = ((balls[i]->radius + balls[j]->radius) - sqrt((dist->x * dist->x) + (dist->y * dist->y))) * (dist->y / sqrt((dist->x * dist->x) + (dist->y * dist->y)));
 				float mj, mi;
-				if(balls[j]->mass != balls[i]->mass){
-					mj= balls[j]->mass / (balls[j]->mass + balls[i]->mass);
-					mi= balls[i]->mass / (balls[j]->mass + balls[i]->mass);
+				if (balls[j]->mass != balls[i]->mass){
+					mj = balls[j]->mass / (balls[j]->mass + balls[i]->mass);
+					mi = balls[i]->mass / (balls[j]->mass + balls[i]->mass);
 				}
 				else{
 					mj = 0.5;
@@ -250,7 +234,7 @@ void TimerHandler::onTimer()
 				if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y)
 				{	// Jx > IX && JY > IY
 					balls[j]->position->Add(xoverlap * mj, yoverlap * mj);
-					balls[i]->position->Add(xoverlap * -mi , yoverlap * -mi);
+					balls[i]->position->Add(xoverlap * -mi, yoverlap * -mi);
 				}
 				else if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y < balls[i]->position->y)
 				{	// JX > IX && JY < IY
@@ -271,7 +255,7 @@ void TimerHandler::onTimer()
 				bounce = true;
 			}
 			//*
-			if (dist->Length() <= balls[j]->radius + balls[i]->radius  || bounce){	
+			if (dist->Length() <= balls[j]->radius + balls[i]->radius || bounce){
 				Vector* normCol = dist->normalize();
 				//adjust velocity
 				Vector* Vdiff = new Vector(balls[j]->velocity->x, balls[j]->velocity->y);
@@ -363,7 +347,7 @@ void BallView::mouseDoubleClickEvent(QMouseEvent *event)
 
 int main(int argc, char** argv)
 {
-	
+
 	//jframe
 	QApplication app(argc, argv);
 	//panel
@@ -379,10 +363,8 @@ int main(int argc, char** argv)
 	}
 
 
- 	KeyPress *keyPress = new KeyPress();
-    keyPress->show();
-
 	view = new BallView(scene);
+	view->setFocusPolicy(Qt::ClickFocus);
 	view->setWindowTitle("Balls JC & Bree");
 	view->resize(500, 500);
 	view->setMouseTracking(true);
@@ -399,3 +381,4 @@ int main(int argc, char** argv)
 	//window is created here
 	return app.exec();
 }
+
