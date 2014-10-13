@@ -13,6 +13,7 @@ public:
 	void Add(float, float);
 	void Sub(Vector*);
 	void Multiply(float);
+	void Multiply(Vector*);
 	float DotProduct(Vector*);
 	float Length();
 	Vector* normalize();
@@ -46,6 +47,7 @@ class Link : public QGraphicsItem
 public:
 	int id;
 	int ball[2];
+	float dist;
 	Link();
 	Link(int,int,int);
 	//ball 1 index, ball 2 index, ID

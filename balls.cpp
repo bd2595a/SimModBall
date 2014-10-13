@@ -58,6 +58,10 @@ void Vector::Multiply(float multiplier)
 	x *= multiplier;
 	y *= multiplier;
 }
+void Vector::Multiply(Vector* vector){
+	x *= vector->x;
+	y *= vector->y;
+}
 
 void Vector::Sub(Vector* vector)
 {
@@ -108,10 +112,51 @@ Link::Link(){}
 Link::Link(int b1num, int b2num, int idnum){
 	ball[0] = b1num;
 	ball[1] = b2num;
+	Vector* temp = balls[ball[0]]->position;
+	temp->Sub(balls[ball[1]]->position);
+	dist = temp->Length();
 	id = idnum;
 	linkID++;
 }
 
+void Link::contract(){
+	// V2 - V1 = axis from V1 to v2
+	// V1 - V2 = axis from V2 to V1
+	//find vector between the ball positions
+	//axis = ball 1 to ball 0
+	Vector* axis10 = balls[ball[0]]->position;
+	axis10->Sub(balls[ball[1]]->position);
+	//axis = ball 0 to ball 1
+	Vector* axis01 = balls[ball[1]]->position;
+	axis01->Sub(balls[ball[0]]->position);
+
+	//if length of that vector is > dist
+	float lendif = axis10->Length() - dist;
+	if(lendif != 0) // if it's <0 or >0 ... ... ... SHOULD BE THE SAME FOR BOTH 
+	{	// move each ball along the vector proportional to their masses
+
+		//find the vector axis between the ball to each other
+		Vector* norm10 = axis10;
+		norm10= norm10->normalize();
+		Vector* norm01 = axis01;
+		norm01= norm01->normalize();
+		//Find proportion based on mass
+		float b0prop = balls[ball[0]]->mass / ( balls[ball[0]]->mass + balls[ball[1]]->mass);
+		float b1prop = balls[ball[1]]->mass / ( balls[ball[0]]->mass + balls[ball[1]]->mass);
+
+		//Find proportional move distance
+		float b0distmove = lendif * b0prop; 
+		float b1distmove = lendif * b1prop;
+		norm01->Multiply(b0distmove);
+		norm10->Multiply(b1distmove);
+
+		//Move the balls by the normal axis times move distance
+		balls[ball[0]]->position->Add( norm01 );
+		balls[ball[1]]->position->Add( norm10 );
+	}
+	
+
+}
 // KEYPRESS
 
 
@@ -146,14 +191,14 @@ void Ball::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 //specify where to update screen here
 QRectF Link::boundingRect() const
 {
-	return QRectF(balls[ball[0]]->position->x, balls[ball[0]]->position->y, 10, 10);
+	return QRectF(balls[ball[0]]->position->x, balls[ball[0]]->position->y, balls[ball[1]]->position->x, balls[ball[1]]->position->y);
 }
 
 
 //drawing goes here
 void Link::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
-	painter->drawLine(50, 50, 450, 450);
+	painter->drawLine(balls[ball[0]]->position->x, balls[ball[0]]->position->y, balls[ball[1]]->position->x, balls[ball[1]]->position->y);
 }
 
 // TIMERHANDLER
@@ -361,7 +406,6 @@ int main(int argc, char** argv)
 		scene->addItem(balls[i]);
 		balls[i]->setPos(balls[i]->position->x, balls[i]->position->y);
 	}
-
 
 	view = new BallView(scene);
 	view->setFocusPolicy(Qt::ClickFocus);
