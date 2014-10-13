@@ -16,7 +16,7 @@ Link* links[100];
 float R = 1.0;
 QGraphicsScene* canvas;//canvas
 BallView* view;	//the window
-
+ 
 bool timestop = false;
 
 float absJC(float val)
@@ -192,9 +192,8 @@ void Ball::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 //specify where to update screen here
 QRectF Link::boundingRect() const
 {
-	return QRectF(0, 0, 500, 500);
+	return QRectF(0,0,500,500);
 }
-
 
 //drawing goes here
 void Link::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
@@ -277,6 +276,7 @@ void TimerHandler::onTimer()
 					mi = 0.5;
 				}
 
+
 				if (balls[j]->position->x > balls[i]->position->x && balls[j]->position->y > balls[i]->position->y)
 				{	// Jx > IX && JY > IY
 					balls[j]->position->Add(xoverlap * mj, yoverlap * mj);
@@ -336,6 +336,10 @@ void TimerHandler::onTimer()
 	// MOVE THE BALL ON THE SCREEN
 	for (int d = 0; d < NUMBALLS; d++){
 		balls[d]->setPos(balls[d]->position->x, balls[d]->position->y);
+	}
+	for (int linkNum = 0; linkNum < linkID; linkNum++)
+	{
+		links[linkNum]->update();
 	}
 
 }
