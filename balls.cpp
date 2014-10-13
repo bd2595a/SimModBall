@@ -125,13 +125,11 @@ void Link::contract(){
 	// V1 - V2 = axis from V2 to V1
 	//find vector between the ball positions
 	//axis = ball 1 to ball 0
-	ball2+=0;
-	ball1+=0;
-	Vector *axis10 = new Vector(balls[ball2]->position->x, balls[ball2]->position->y);
-	axis10->Sub(balls[ball1]->position);
+	Vector *axis10 = new Vector(balls[ball1]->position->x, balls[ball1]->position->y);
+	axis10->Sub(balls[ball2]->position);
 	//axis = ball 0 to ball 1
-	Vector *axis01 = new Vector(balls[ball1]->position->x, balls[ball1]->position->y);
-	axis01->Sub(balls[ball2]->position);
+	Vector *axis01 = new Vector(balls[ball2]->position->x, balls[ball2]->position->y);
+	axis01->Sub(balls[ball1]->position);
 
 	//if length of that vector is > dist
 	float lendif = axis10->Length() - dist;
