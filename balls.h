@@ -46,10 +46,10 @@ class Link : public QGraphicsItem
 {
 public:
 	int id;
-	int ball[2];
+	int ball1, ball2;
 	float dist;
 	Link();
-	Link(int,int,int);
+	Link(int,int);
 	//ball 1 index, ball 2 index, ID
 	void contract();
 	QRectF boundingRect() const;

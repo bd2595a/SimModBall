@@ -13,7 +13,7 @@ int ball1ID = -1;
 int linkID = 0;
 Ball* balls[NUMBALLS];
 float R = 1.0;
-QGraphicsScene* scene;//canvas
+QGraphicsScene* canvas;//canvas
 BallView* view;	//the window
 
 bool timestop = false;
@@ -109,13 +109,13 @@ void Ball::move(float dt)
 //LINKages
 Link::Link(){}
 
-Link::Link(int b1num, int b2num, int idnum){
-	ball[0] = b1num;
-	ball[1] = b2num;
-	Vector* temp = balls[ball[0]]->position;
-	temp->Sub(balls[ball[1]]->position);
+Link::Link(int b1num, int b2num){
+	ball1 = b1num;
+	ball2 = b2num;
+	Vector* temp = balls[ball1]->position;
+	temp->Sub(balls[ball2]->position);
 	dist = temp->Length();
-	id = idnum;
+	id = linkID;
 	linkID++;
 }
 
@@ -124,11 +124,11 @@ void Link::contract(){
 	// V1 - V2 = axis from V2 to V1
 	//find vector between the ball positions
 	//axis = ball 1 to ball 0
-	Vector* axis10 = balls[ball[0]]->position;
-	axis10->Sub(balls[ball[1]]->position);
+	Vector* axis10 = balls[ball1]->position;
+	axis10->Sub(balls[ball2]->position);
 	//axis = ball 0 to ball 1
-	Vector* axis01 = balls[ball[1]]->position;
-	axis01->Sub(balls[ball[0]]->position);
+	Vector* axis01 = balls[ball1]->position;
+	axis01->Sub(balls[ball2]->position);
 
 	//if length of that vector is > dist
 	float lendif = axis10->Length() - dist;
@@ -191,7 +191,7 @@ void Ball::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 //specify where to update screen here
 QRectF Link::boundingRect() const
 {
-	return QRectF(balls[ball[0]]->position->x, balls[ball[0]]->position->y, balls[ball[1]]->position->x, balls[ball[1]]->position->y);
+	return QRectF(0, 0, 500, 500);
 }
 
 
@@ -363,7 +363,8 @@ void BallView::mousePressEvent(QMouseEvent *event)
 			{
 				if (event->x() >= balls[i]->position->x - balls[i]->radius && event->x() <= balls[i]->position->x + balls[i]->radius && event->y() >= balls[i]->position->y - balls[i]->radius && event->y() <= balls[i]->position->y + balls[i]->radius)
 				{
-					new Link(ball1ID, i, linkID);
+					Link *newLink = new Link(ball1ID, i);
+					canvas->addItem(newLink);
 					ball1ID = -1;
 					break;
 				}
@@ -397,17 +398,17 @@ int main(int argc, char** argv)
 	QApplication app(argc, argv);
 	//panel
 	//set window size to 500,500
-	scene = new QGraphicsScene();
-	scene->setSceneRect(0, 0, 500, 500);
+	canvas = new QGraphicsScene();
+	canvas->setSceneRect(0, 0, 500, 500);
 	srand(time(NULL));
 
 	for (int i = 0; i < NUMBALLS; i++){
 		balls[i] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, 10, i);
-		scene->addItem(balls[i]);
+		canvas->addItem(balls[i]);
 		balls[i]->setPos(balls[i]->position->x, balls[i]->position->y);
 	}
 
-	view = new BallView(scene);
+	view = new BallView(canvas);
 	view->setFocusPolicy(Qt::ClickFocus);
 	view->setWindowTitle("Balls JC & Bree");
 	view->resize(500, 500);
