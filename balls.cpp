@@ -12,6 +12,7 @@ const int NUMBALLS = 10;
 int ball1ID = -1;
 int linkID = 0;
 Ball* balls[NUMBALLS];
+Link* links[100];
 float R = 1.0;
 QGraphicsScene* canvas;//canvas
 BallView* view;	//the window
@@ -112,7 +113,7 @@ Link::Link(){}
 Link::Link(int b1num, int b2num){
 	ball1 = b1num;
 	ball2 = b2num;
-	Vector* temp = balls[ball1]->position;
+	Vector* temp = new Vector(balls[ball1]->position->x, balls[ball1]->position->y);
 	temp->Sub(balls[ball2]->position);
 	dist = temp->Length();
 	id = linkID;
@@ -124,10 +125,12 @@ void Link::contract(){
 	// V1 - V2 = axis from V2 to V1
 	//find vector between the ball positions
 	//axis = ball 1 to ball 0
-	Vector* axis10 = balls[ball1]->position;
-	axis10->Sub(balls[ball2]->position);
+	ball2+=0;
+	ball1+=0;
+	Vector *axis10 = new Vector(balls[ball2]->position->x, balls[ball2]->position->y);
+	axis10->Sub(balls[ball1]->position);
 	//axis = ball 0 to ball 1
-	Vector* axis01 = balls[ball1]->position;
+	Vector *axis01 = new Vector(balls[ball1]->position->x, balls[ball1]->position->y);
 	axis01->Sub(balls[ball2]->position);
 
 	//if length of that vector is > dist
@@ -136,13 +139,13 @@ void Link::contract(){
 	{	// move each ball along the vector proportional to their masses
 
 		//find the vector axis between the ball to each other
-		Vector* norm10 = axis10;
+		Vector* norm10 = new Vector(axis10->x, axis10->y);
 		norm10= norm10->normalize();
-		Vector* norm01 = axis01;
+		Vector* norm01 = new Vector(axis01->x, axis01->y);
 		norm01= norm01->normalize();
 		//Find proportion based on mass
-		float b0prop = balls[ball[0]]->mass / ( balls[ball[0]]->mass + balls[ball[1]]->mass);
-		float b1prop = balls[ball[1]]->mass / ( balls[ball[0]]->mass + balls[ball[1]]->mass);
+		float b0prop = balls[ball1]->mass / ( balls[ball2]->mass + balls[ball1]->mass);
+		float b1prop = balls[ball2]->mass / ( balls[ball1]->mass + balls[ball2]->mass);
 
 		//Find proportional move distance
 		float b0distmove = lendif * b0prop; 
@@ -151,8 +154,8 @@ void Link::contract(){
 		norm10->Multiply(b1distmove);
 
 		//Move the balls by the normal axis times move distance
-		balls[ball[0]]->position->Add( norm01 );
-		balls[ball[1]]->position->Add( norm10 );
+		balls[ball1]->position->Add( norm01 );
+		balls[ball2]->position->Add( norm10 );
 	}
 	
 
@@ -198,7 +201,7 @@ QRectF Link::boundingRect() const
 //drawing goes here
 void Link::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
-	painter->drawLine(balls[ball[0]]->position->x, balls[ball[0]]->position->y, balls[ball[1]]->position->x, balls[ball[1]]->position->y);
+	painter->drawLine(balls[ball1]->position->x, balls[ball1]->position->y, balls[ball2]->position->x, balls[ball2]->position->y);
 }
 
 // TIMERHANDLER
@@ -327,6 +330,11 @@ void TimerHandler::onTimer()
 		}
 	}
 
+	for (int linkNum = 0; linkNum < linkID; linkNum++)
+	{
+		links[linkNum]->contract();
+	}
+
 	// MOVE THE BALL ON THE SCREEN
 	for (int d = 0; d < NUMBALLS; d++){
 		balls[d]->setPos(balls[d]->position->x, balls[d]->position->y);
@@ -363,7 +371,8 @@ void BallView::mousePressEvent(QMouseEvent *event)
 			{
 				if (event->x() >= balls[i]->position->x - balls[i]->radius && event->x() <= balls[i]->position->x + balls[i]->radius && event->y() >= balls[i]->position->y - balls[i]->radius && event->y() <= balls[i]->position->y + balls[i]->radius)
 				{
-					Link *newLink = new Link(ball1ID, i);
+					Link* newLink = new Link(ball1ID, i);
+					links[linkID - 1] = newLink;
 					canvas->addItem(newLink);
 					ball1ID = -1;
 					break;
