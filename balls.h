@@ -27,11 +27,13 @@ public:
 	float radius;
 	float mass;
 	int id;
+	bool stationary;
+	int stationX, stationY;
 
 
-	//position x,y , velocity x,y ,radius,id
+	//position x,y , velocity x,y ,radius,id, stationary
 	Ball();
-	Ball(float, float, float, float, float, float, int);
+	Ball(float, float, float, float, float, float, int, bool);
 	//draw
 	void printBall();
 	//move delta time  

@@ -91,11 +91,17 @@ Vector* Vector::normalize(){
 // BALL
 Ball::Ball(){}
 
-Ball::Ball(float px, float py, float vx, float vy, float r, float m, int i)
+Ball::Ball(float px, float py, float vx, float vy, float r, float m, int i, bool stationary2)
 {
 	position = new Vector(px, py);
 	velocity = new Vector(vx, vy);
 	radius = r; id = i; mass = m;
+	stationary = stationary2;
+	if (stationary)
+	{
+		stationX = px;
+		stationY = py;
+	}
 }
 
 void Ball::printBall()
@@ -218,7 +224,8 @@ void TimerHandler::onTimer()
 
 	// MOVE THE BALLS
 	for (int p = 0; p < NUMBALLS; p++){
-		balls[p]->move(1);
+		if (!balls[p]->stationary)
+			balls[p]->move(1);
 	}
 
 	// CHECK FOR FAILURE POINTS
@@ -318,11 +325,24 @@ void TimerHandler::onTimer()
 				Vector* xColAdjust2 = new Vector(normCol->x, normCol->y);
 				xColAdjust1->Multiply(vadjust1);
 				xColAdjust2->Multiply(vadjust2);
-
-				balls[j]->velocity->Sub(xColAdjust1);
-				balls[i]->velocity->Add(xColAdjust2);
+				
+				if (!balls[j]->stationary)
+					balls[j]->velocity->Sub(xColAdjust1);
+				else
+				{
+					balls[j]->position->x = balls[j]->stationX;
+					balls[j]->position->y = balls[j]->stationY;
+				}
+				if (!balls[i]->stationary)
+					balls[i]->velocity->Add(xColAdjust2);
+				else
+				{
+					balls[i]->position->x = balls[i]->stationX;
+					balls[i]->position->y = balls[i]->stationY;
+				}
 				delete xColAdjust1;
-				delete xColAdjust2;
+				delete xColAdjust2;				
+
 			}
 			//*/
 		}
@@ -413,11 +433,14 @@ int main(int argc, char** argv)
 	canvas->setSceneRect(0, 0, 500, 500);
 	srand(time(NULL));
 
-	for (int i = 0; i < NUMBALLS; i++){
-		balls[i] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, 10, i);
+	for (int i = 0; i < NUMBALLS-1; i++){
+		balls[i] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, 10, i,false);
 		canvas->addItem(balls[i]);
 		balls[i]->setPos(balls[i]->position->x, balls[i]->position->y);
 	}
+	balls[9] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, 10, 11, true);
+	canvas->addItem(balls[9]);
+	balls[9]->setPos(balls[9]->position->x, balls[9]->position->y);
 
 	view = new BallView(canvas);
 	view->setFocusPolicy(Qt::ClickFocus);
