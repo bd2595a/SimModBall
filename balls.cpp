@@ -16,7 +16,7 @@ Link* links[100];
 float R = 1.0;
 QGraphicsScene* canvas;//canvas
 BallView* view;	//the window
- 
+
 bool timestop = false;
 
 float absJC(float val)
@@ -139,29 +139,41 @@ void Link::contract(){
 
 	//if length of that vector is > dist
 	float lendif = axis10->Length() - dist;
-	if(lendif != 0) // if it's <0 or >0 ... ... ... SHOULD BE THE SAME FOR BOTH 
+	if (lendif != 0) // if it's <0 or >0 ... ... ... SHOULD BE THE SAME FOR BOTH 
 	{	// move each ball along the vector proportional to their masses
 
 		//find the vector axis between the ball to each other
 		Vector* norm10 = new Vector(axis10->x, axis10->y);
-		norm10= norm10->normalize();
+		norm10 = norm10->normalize();
 		Vector* norm01 = new Vector(axis01->x, axis01->y);
-		norm01= norm01->normalize();
+		norm01 = norm01->normalize();
 		//Find proportion based on mass
-		float b0prop = balls[ball1]->mass / ( balls[ball2]->mass + balls[ball1]->mass);
-		float b1prop = balls[ball2]->mass / ( balls[ball1]->mass + balls[ball2]->mass);
+		float b0prop = balls[ball1]->mass / (balls[ball2]->mass + balls[ball1]->mass);
+		float b1prop = balls[ball2]->mass / (balls[ball1]->mass + balls[ball2]->mass);
 
 		//Find proportional move distance
-		float b0distmove = lendif * b0prop; 
+		float b0distmove = lendif * b0prop;
 		float b1distmove = lendif * b1prop;
 		norm01->Multiply(b0distmove);
 		norm10->Multiply(b1distmove);
 
 		//Move the balls by the normal axis times move distance
-		balls[ball1]->position->Add( norm01 );
-		balls[ball2]->position->Add( norm10 );
+		if (balls[ball1]->stationary)
+		{
+			balls[ball1]->position->x = balls[ball1]->stationX;
+			balls[ball1]->position->y = balls[ball1]->stationY;
+		}
+		else
+			balls[ball1]->position->Add(norm01);
+		if (balls[ball2]->stationary)
+		{
+			balls[ball2]->position->x = balls[ball2]->stationX;
+			balls[ball2]->position->y = balls[ball2]->stationY;
+		}
+		else
+			balls[ball2]->position->Add(norm10);
 	}
-	
+
 
 }
 // KEYPRESS
@@ -179,7 +191,7 @@ void BallView::keyReleaseEvent(QKeyEvent *event)//putting this code in release b
 {
 	if (event->key() == Qt::Key_Space)
 	{
-		timestop = timestop == true? false: true;//this says "is timestop == true? then set it to false. else, set it to true."
+		timestop = timestop == true ? false : true;//this says "is timestop == true? then set it to false. else, set it to true."
 	}
 }
 
@@ -198,7 +210,7 @@ void Ball::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 //specify where to update screen here
 QRectF Link::boundingRect() const
 {
-	return QRectF(0,0,500,500);
+	return QRectF(0, 0, 500, 500);
 }
 
 //drawing goes here
@@ -218,14 +230,17 @@ TimerHandler::TimerHandler(int t)
 //update frame function - this is called repeatedly by the system
 void TimerHandler::onTimer()
 {
-	if(timestop){
+	if (timestop){
 		return;
 	}
 
 	// MOVE THE BALLS
 	for (int p = 0; p < NUMBALLS; p++){
 		if (!balls[p]->stationary)
+		{
+			balls[p]->position->Add(0, 9);//add gravity
 			balls[p]->move(1);
+		}
 	}
 
 	// CHECK FOR FAILURE POINTS
@@ -325,23 +340,27 @@ void TimerHandler::onTimer()
 				Vector* xColAdjust2 = new Vector(normCol->x, normCol->y);
 				xColAdjust1->Multiply(vadjust1);
 				xColAdjust2->Multiply(vadjust2);
-				
+
 				if (!balls[j]->stationary)
+				{
 					balls[j]->velocity->Sub(xColAdjust1);
+				}
 				else
 				{
 					balls[j]->position->x = balls[j]->stationX;
 					balls[j]->position->y = balls[j]->stationY;
 				}
 				if (!balls[i]->stationary)
+				{
 					balls[i]->velocity->Add(xColAdjust2);
+				}
 				else
 				{
 					balls[i]->position->x = balls[i]->stationX;
 					balls[i]->position->y = balls[i]->stationY;
 				}
 				delete xColAdjust1;
-				delete xColAdjust2;				
+				delete xColAdjust2;
 
 			}
 			//*/
@@ -440,11 +459,11 @@ int main(int argc, char** argv)
 	}
 	for (int i = 0; i < 5; i++)//this is the support structure
 	{
-		balls[i+5] = new Ball((i*42)+170, 250, 0, 0, 20, 10, i+10, true);
-		canvas->addItem(balls[i+5]);
-		balls[i+5]->setPos(balls[i+5]->position->x, balls[i+5]->position->y);
+		balls[i + 5] = new Ball((i * 42) + 170, 250, 0, 0, 20, 10, i + 10, true);
+		canvas->addItem(balls[i + 5]);
+		balls[i + 5]->setPos(balls[i + 5]->position->x, balls[i + 5]->position->y);
 	}
-	
+
 	for (int i = 0; i < 5; i++)
 	{
 		links[i] = new Link(i, i + 5);
