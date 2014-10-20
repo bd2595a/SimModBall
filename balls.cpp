@@ -453,13 +453,13 @@ int main(int argc, char** argv)
 	srand(time(NULL));
 
 	for (int i = 0; i < 5; i++){//these are the moveable balls
-		balls[i] = new Ball((i * 42) + 170, 350, 0, 0, 20, 10, i + 10, false);
+		balls[i] = new Ball((i * 40) + 170, 350, 0, 0, 20, 10, i + 10, false);
 		canvas->addItem(balls[i]);
 		balls[i]->setPos(balls[i]->position->x, balls[i]->position->y);
 	}
 	for (int i = 0; i < 5; i++)//this is the support structure
 	{
-		balls[i + 5] = new Ball((i * 42) + 170, 250, 0, 0, 20, 10, i + 10, true);
+		balls[i + 5] = new Ball((i * 40) + 170, 250, 0, 0, 20, 10, i + 10, true);
 		canvas->addItem(balls[i + 5]);
 		balls[i + 5]->setPos(balls[i + 5]->position->x, balls[i + 5]->position->y);
 	}
@@ -470,8 +470,9 @@ int main(int argc, char** argv)
 		canvas->addItem(links[i]);
 
 	}
-	balls[0]->position->x -= 20;
-	balls[9]->setPos(balls[0]->position->x, balls[0]->position->y);
+	balls[0]->position->x -= 30;
+	balls[0]->position->y -= 30;
+	balls[0]->setPos(balls[0]->position->x, balls[0]->position->y);
 
 	view = new BallView(canvas);
 	view->setFocusPolicy(Qt::ClickFocus);
