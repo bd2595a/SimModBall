@@ -433,14 +433,26 @@ int main(int argc, char** argv)
 	canvas->setSceneRect(0, 0, 500, 500);
 	srand(time(NULL));
 
-	for (int i = 0; i < NUMBALLS-1; i++){
-		balls[i] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, 10, i,false);
+	for (int i = 0; i < 5; i++){//these are the moveable balls
+		balls[i] = new Ball((i * 42) + 170, 350, 0, 0, 20, 10, i + 10, false);
 		canvas->addItem(balls[i]);
 		balls[i]->setPos(balls[i]->position->x, balls[i]->position->y);
 	}
-	balls[9] = new Ball(RandomNumber(50, 450), RandomNumber(50, 450), RandomNumber(-5, 5), RandomNumber(-5, 5), 20, 10, 11, true);
-	canvas->addItem(balls[9]);
-	balls[9]->setPos(balls[9]->position->x, balls[9]->position->y);
+	for (int i = 0; i < 5; i++)//this is the support structure
+	{
+		balls[i+5] = new Ball((i*42)+170, 250, 0, 0, 20, 10, i+10, true);
+		canvas->addItem(balls[i+5]);
+		balls[i+5]->setPos(balls[i+5]->position->x, balls[i+5]->position->y);
+	}
+	
+	for (int i = 0; i < 5; i++)
+	{
+		links[i] = new Link(i, i + 5);
+		canvas->addItem(links[i]);
+
+	}
+	balls[0]->position->x -= 20;
+	balls[9]->setPos(balls[0]->position->x, balls[0]->position->y);
 
 	view = new BallView(canvas);
 	view->setFocusPolicy(Qt::ClickFocus);
