@@ -238,13 +238,18 @@ void TimerHandler::onTimer()
 	for (int p = 0; p < NUMBALLS; p++){
 		if (!balls[p]->stationary)
 		{
-			balls[p]->position->Add(0, 9);//add gravity
 			balls[p]->move(1);
 		}
 	}
 
 	// CHECK FOR FAILURE POINTS
 	for (int j = 0; j < NUMBALLS; j++) {
+		if (!balls[j]->stationary)
+			balls[j]->velocity->Add(0, 1);//add gravity
+		for (int linkNum = 0; linkNum < linkID; linkNum++)
+		{
+			links[linkNum]->contract();
+		}
 		// CHECK IF OUT OF BOUNDS
 		if (balls[j]->position->x < 0 + balls[j]->radius){
 			// Wall L @ position 0
