@@ -1,4 +1,3 @@
-#include <iostream>
 #include <QtWidgets>
 #include <QKeyEvent>
 #include "balls.h"
