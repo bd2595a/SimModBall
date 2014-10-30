@@ -136,6 +136,8 @@ void Link::contract(){
 	Vector *axis01 = new Vector(balls[ball2]->position->x, balls[ball2]->position->y);
 	axis01->Sub(balls[ball1]->position);
 
+	//MOVE THE BALL
+
 	//if length of that vector is > dist
 	float lendif = axis10->Length() - dist;
 	if (lendif != 0) // if it's <0 or >0 ... ... ... SHOULD BE THE SAME FOR BOTH 
@@ -172,6 +174,20 @@ void Link::contract(){
 		else
 			balls[ball2]->position->Add(norm10);
 	}
+
+	/*
+
+	//CHANGE THE BALL'S VELOCITIES
+	//find angle between link and ball2 velocity
+	Vector* vel2 = new Vector(balls[ball2]->velocity->x,balls[ball2]->velocity->y);
+	Vector* vel2norm = new Vector(balls[ball2]->velocity->x,balls[ball2]->velocity->y);
+	vel2norm->normalize();
+	axis01->normalize();
+	//get angle between two vectors
+	float b2vellinkang = acos(vel2norm->DotProduct(axis01));
+	float newvel= cos(b2vellinkang) * vel2->length;
+
+	*/
 
 
 }
