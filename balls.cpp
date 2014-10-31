@@ -194,14 +194,10 @@ void Link::contract(){
 	float newvel= cos(90-b2vellinkang) * vel2->Length();
 	//magnitude of velocity tangent to circle
 
-	Vector* linkPerp = new Vector(balls[ball2]->position->x, balls[ball2]->position->y);
-	linkPerp->Sub(balls[ball1]->position);
-	//vector from b1->b2,
-	linkPerp->makePerpindicular();
-	linkPerp->normalize();
+	axis01->makePerpindicular();
 
-	linkPerp->Multiply(newvel);
-	balls[ball2]->velocity = linkPerp;
+	axis01->Multiply(newvel);
+	balls[ball2]->velocity = axis01;
 
 
 
