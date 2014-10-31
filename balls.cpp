@@ -87,6 +87,12 @@ Vector* Vector::normalize(){
 	return r;
 }
 
+void Vector::makePerpindicular(){
+	float tempx = x;
+	x = y * -1;
+	y = tempx;
+}
+
 // BALL
 Ball::Ball(){}
 
@@ -175,7 +181,6 @@ void Link::contract(){
 			balls[ball2]->position->Add(norm10);
 	}
 
-	/*
 
 	//CHANGE THE BALL'S VELOCITIES
 	//find angle between link and ball2 velocity
@@ -183,11 +188,21 @@ void Link::contract(){
 	Vector* vel2norm = new Vector(balls[ball2]->velocity->x,balls[ball2]->velocity->y);
 	vel2norm->normalize();
 	axis01->normalize();
-	//get angle between two vectors
+	//get angle between gravity and link to ball2
 	float b2vellinkang = acos(vel2norm->DotProduct(axis01));
-	float newvel= cos(b2vellinkang) * vel2->length;
+	//find the magnitude of the ajacent side between gravity and 
+	float newvel= cos(90-b2vellinkang) * vel2->Length();
+	//magnitude of velocity tangent to circle
 
-	*/
+	Vector* linkPerp = new Vector(balls[ball2]->position->x, balls[ball2]->position->y);
+	linkPerp->Sub(balls[ball1]->position);
+	//vector from b1->b2,
+	linkPerp->makePerpindicular();
+	linkPerp->normalize();
+
+	linkPerp->Multiply(newvel);
+	balls[ball2]->velocity = linkPerp;
+
 
 
 }
