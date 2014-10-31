@@ -4,6 +4,8 @@
 #include <time.h>
 #include <math.h>
 
+#define PI 3.14159265
+
 using namespace std;	//std::cout is annoying
 
 //GLOBALS
@@ -181,25 +183,32 @@ void Link::contract(){
 			balls[ball2]->position->Add(norm10);
 	}
 
+	if(!(balls[ball1]->velocity->x > 0) && !(balls[ball1]->velocity->y > 0)){
+		//CHANGE THE BALL'S VELOCITIES
+		//find angle between link and ball2 velocity
+		Vector* vel1 = new Vector(balls[ball1]->velocity->x,balls[ball1]->velocity->y);
+		Vector* vel1norm = new Vector(balls[ball1]->velocity->x,balls[ball1]->velocity->y);
+		vel1norm->normalize();
+		axis10->normalize();
+		//get angle between gravity and link to ball2
+		float dot = vel1norm->DotProduct(axis10);
+		qDebug() << "dot "<< dot;
+		// float b1vellinkang = acos(dot) * 180.0 / PI;
+		// qDebug() << "angle " << b1vellinkang;
+		/*
+		//find the magnitude of the ajacent side between gravity and 
+		float newvel= cos(90-b1vellinkang) * vel1->Length();
+		qDebug() << "newvel " << newvel;
+		//magnitude of velocity tangent to circle
 
-	//CHANGE THE BALL'S VELOCITIES
-	//find angle between link and ball2 velocity
-	Vector* vel2 = new Vector(balls[ball2]->velocity->x,balls[ball2]->velocity->y);
-	Vector* vel2norm = new Vector(balls[ball2]->velocity->x,balls[ball2]->velocity->y);
-	vel2norm->normalize();
-	axis01->normalize();
-	//get angle between gravity and link to ball2
-	float b2vellinkang = acos(vel2norm->DotProduct(axis01));
-	//find the magnitude of the ajacent side between gravity and 
-	float newvel= cos(90-b2vellinkang) * vel2->Length();
-	//magnitude of velocity tangent to circle
+		axis10->makePerpindicular();
 
-	axis01->makePerpindicular();
-
-	axis01->Multiply(newvel);
-	balls[ball2]->velocity = axis01;
-
-
+		axis10->Multiply(newvel);
+		qDebug() << "newvector" << axis10->x << " " << axis10->y;
+		balls[ball1]->velocity = axis10;
+		qDebug() << "changed velocity ";
+		*/
+	}
 
 }
 // KEYPRESS
@@ -268,10 +277,12 @@ void TimerHandler::onTimer()
 		}
 	}
 
+	balls[0]->velocity->Add(0, 1);//add gravity only to ball1
+
 	// CHECK FOR FAILURE POINTS
 	for (int j = 0; j < NUMBALLS; j++) {
 		if (!balls[j]->stationary)
-			balls[j]->velocity->Add(0, 1);//add gravity
+			//balls[j]->velocity->Add(0, 1);//add gravity
 		for (int linkNum = 0; linkNum < linkID; linkNum++)
 		{
 			links[linkNum]->contract();
