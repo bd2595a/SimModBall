@@ -183,7 +183,7 @@ void Link::contract(){
 			balls[ball2]->position->Add(norm10);
 	}
 
-	if(!(balls[ball1]->velocity->x > 0) && !(balls[ball1]->velocity->y > 0)){
+	if(balls[ball1]->velocity->x > 0 || balls[ball1]->velocity->y > 0){
 		//CHANGE THE BALL'S VELOCITIES
 		//find angle between link and ball2 velocity
 		Vector* vel1 = new Vector(balls[ball1]->velocity->x,balls[ball1]->velocity->y);
@@ -209,7 +209,6 @@ void Link::contract(){
 		qDebug() << "changed velocity ";
 		*/
 	}
-
 }
 // KEYPRESS
 
