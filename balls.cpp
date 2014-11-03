@@ -183,19 +183,25 @@ void Link::contract(){
 			balls[ball2]->position->Add(norm10);
 	}
 
-	if(!(balls[ball1]->velocity->x > 0) && !(balls[ball1]->velocity->y > 0)){
+	if( balls[ball1]->velocity->x > 0 || balls[ball1]->velocity->y > 0){
 		//CHANGE THE BALL'S VELOCITIES
 		//find angle between link and ball2 velocity
-		Vector* vel1 = new Vector(balls[ball1]->velocity->x,balls[ball1]->velocity->y);
+		//Vector* vel1 = new Vector(balls[ball1]->velocity->x,balls[ball1]->velocity->y);
 		Vector* vel1norm = new Vector(balls[ball1]->velocity->x,balls[ball1]->velocity->y);
 		vel1norm->normalize();
 		axis10->normalize();
 		//get angle between gravity and link to ball2
-		float dot = vel1norm->DotProduct(axis10);
-		qDebug() << "dot "<< dot;
-		// float b1vellinkang = acos(dot) * 180.0 / PI;
-		// qDebug() << "angle " << b1vellinkang;
+
+		float b1vellinkang = atan2(vel1norm->y - axis10->y,vel1norm->x - axis10 -> x ) * 180 /PI;
+		qDebug() << "angle " << b1vellinkang+90;
+
 		/*
+		qDebug() << "velocity " << balls[ball1]->velocity->x << " " << balls[ball1]->velocity->y;
+		double dot = vel1norm->DotProduct(axis10);
+		qDebug() << "dot "<< dot;
+		double b1vellinkang = acos(dot) * 180.0 / PI;
+		qDebug() << "angle " << b1vellinkang;
+		
 		//find the magnitude of the ajacent side between gravity and 
 		float newvel= cos(90-b1vellinkang) * vel1->Length();
 		qDebug() << "newvel " << newvel;
@@ -512,8 +518,8 @@ int main(int argc, char** argv)
 		canvas->addItem(links[i]);
 
 	}
-	balls[0]->position->x -= 30;
-	balls[0]->position->y -= 30;
+	balls[0]->position->x -= 100;
+	balls[0]->position->y -= 100;
 	balls[0]->setPos(balls[0]->position->x, balls[0]->position->y);
 
 	view = new BallView(canvas);
