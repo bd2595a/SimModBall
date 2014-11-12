@@ -90,9 +90,17 @@ Vector* Vector::normalize(){
 }
 
 void Vector::makePerpindicular(){
+	//y is -1
 	float tempx = x;
 	x = y * -1;
 	y = tempx;
+}
+
+void Vector::makePerpindicular2(){
+	//x is -1
+	float tempy = y;
+	y = x * -1;
+	x = tempy;
 }
 
 // BALL
@@ -183,21 +191,64 @@ void Link::contract(){
 			balls[ball2]->position->Add(norm10);
 	}
 
-<<<<<<< HEAD
-	if( balls[ball1]->velocity->x > 0 || balls[ball1]->velocity->y > 0){
-=======
-	if(balls[ball1]->velocity->x > 0 || balls[ball1]->velocity->y > 0){
->>>>>>> d608a1f4ff3d16296c225d57033b1ea8d39b92fe
+	if(balls[ball1]->velocity->x != 0 || balls[ball1]->velocity->y != 0){
+		// ball1 is the ball, ball2 is the structure
+		// need to compare velocity vector to perpendicular link vector
+		// axis01 is from ball to support structure
+		qDebug() << "velocity " << balls[ball1]->velocity->x << " " << balls[ball1]->velocity->y;
+		qDebug() << "axis " << axis01->x << " " << axis01->y;
+		//find proportion of velocity vector 
+		//v2 = a2 + p2
+		//v2-a2 = p2
+		//sqrt(v2-a2) = p magnitude
+		//sqrt ( vel mag ^2 - axis mag ^2 )
+		float velo = balls[ball1]->velocity->Length();
+		float linkaxis = axis01->Length();
+		qDebug() << "V" << velo;
+		qDebug() << "L" << linkaxis;
+		double pmag = sqrt( absJC( (velo * velo) - (linkaxis * linkaxis) ) );
+		qDebug() << "PMAG " << pmag;
+		//find perp vector
+		//y,-x is needed make perp2 off of axis
+		qDebug() << "axis     "<<axis01->x<<" "<<axis01->y;
+		axis01->makePerpindicular2();
+		qDebug() << "perpaxis "<<axis01->x<<" "<<axis01->y;
+		//normalize
+		axis01= axis01->normalize();
+		qDebug() << "norpaxis "<<axis01->x<<" "<<axis01->y;
+		//multiply by p mag
+		axis01->Multiply(pmag);
+		qDebug() << "final  V "<<axis01->x<<" "<<axis01->y;
+		qDebug();
+		//apply to velocity
+		balls[ball1]->velocity->x = axis01->x;
+		balls[ball1]->velocity->y = axis01->y;
+
+
+		/*
+		qDebug() << "velocity " << balls[ball1]->velocity->x << " " << balls[ball1]->velocity->y;
 		//CHANGE THE BALL'S VELOCITIES
 		//find angle between link and ball2 velocity
-		//Vector* vel1 = new Vector(balls[ball1]->velocity->x,balls[ball1]->velocity->y);
+		Vector* tang = new Vector(balls[ball1]->position->x, balls[ball1]->position->y);
+		tang->Sub(balls[ball2]->position);
+		tang->makePerpindicular();
+
 		Vector* vel1norm = new Vector(balls[ball1]->velocity->x,balls[ball1]->velocity->y);
 		vel1norm->normalize();
 		axis10->normalize();
 		//get angle between gravity and link to ball2
 
-		float b1vellinkang = atan2(vel1norm->y - axis10->y,vel1norm->x - axis10 -> x ) * 180 /PI;
-		qDebug() << "angle " << b1vellinkang+90;
+		int b1vellinkang = atan2(vel1norm->y - axis10->y,vel1norm->x - axis10 -> x ) * 180 /PI;
+		b1vellinkang = absJC(b1vellinkang+90);
+		qDebug() << "angle " << b1vellinkang;
+		qDebug() << " proportion "<< (float)b1vellinkang/ 90.0 ;
+
+		axis10->makePerpindicular();
+		axis10->Multiply( (float)b1vellinkang / 90.0 );
+
+		balls[ball1]->velocity = axis10;
+
+		*/
 
 		/*
 		qDebug() << "velocity " << balls[ball1]->velocity->x << " " << balls[ball1]->velocity->y;
@@ -261,6 +312,13 @@ QRectF Link::boundingRect() const
 void Link::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
 	painter->drawLine(balls[ball1]->position->x, balls[ball1]->position->y, balls[ball2]->position->x, balls[ball2]->position->y);
+	// Vector* veltemp = new Vector();
+	// veltemp = balls[ball1]->velocity;
+	// veltemp->makePerpindicular();
+	// veltemp->normalize();
+	// veltemp->Multiply(15);
+	// painter->setPen(QPen(Qt::red));
+	// painter->drawLine(balls[ball1]->position->x, balls[ball1]->position->y, balls[ball1]->position->x + veltemp->x, balls[ball1]->position->y + veltemp->y);
 }
 
 // TIMERHANDLER
@@ -523,7 +581,9 @@ int main(int argc, char** argv)
 	}
 	balls[0]->position->x -= 100;
 	balls[0]->position->y -= 100;
+	balls[0]->velocity->y = -7;
 	balls[0]->setPos(balls[0]->position->x, balls[0]->position->y);
+	qDebug() << "velocity " << balls[0]->velocity->x << " " << balls[0]->velocity->y;
 
 	view = new BallView(canvas);
 	view->setFocusPolicy(Qt::ClickFocus);

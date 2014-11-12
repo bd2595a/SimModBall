@@ -17,6 +17,7 @@ public:
 	float DotProduct(Vector*);
 	float Length();
 	void makePerpindicular();
+	void makePerpindicular2();
 	Vector* normalize();
 };
 
