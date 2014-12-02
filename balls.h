@@ -14,6 +14,7 @@ public:
 	void Sub(Vector*);
 	void Multiply(float);
 	void Multiply(Vector*);
+	void Divide(Vector*);
 	float DotProduct(Vector*);
 	float Length();
 	void makePerpindicular();

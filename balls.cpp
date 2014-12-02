@@ -17,6 +17,7 @@ Link* links[100];
 float R = 1.0;
 QGraphicsScene* canvas;//canvas
 BallView* view;	//the window
+float GRAVITY = 0.5;
 
 bool timestop = false;
 
@@ -65,6 +66,11 @@ void Vector::Multiply(Vector* vector){
 	y *= vector->y;
 }
 
+void Vector::Divide(Vector* vector){
+	x = x / vector->x;
+	y = y / vector->y;
+}
+
 void Vector::Sub(Vector* vector)
 {
 	x -= vector->x;
@@ -73,7 +79,7 @@ void Vector::Sub(Vector* vector)
 
 float Vector::DotProduct(Vector* vector2)
 {
-	return (x*vector2->x + y*vector2->y);
+	return (x * vector2->x + y * vector2->y);
 }
 
 float Vector::Length()
@@ -192,37 +198,64 @@ void Link::contract(){
 	}
 
 	if(balls[ball1]->velocity->x != 0 || balls[ball1]->velocity->y != 0){
-		// ball1 is the ball, ball2 is the structure
-		// need to compare velocity vector to perpendicular link vector
-		// axis01 is from ball to support structure
-		qDebug() << "velocity " << balls[ball1]->velocity->x << " " << balls[ball1]->velocity->y;
-		qDebug() << "axis " << axis01->x << " " << axis01->y;
-		//find proportion of velocity vector 
-		//v2 = a2 + p2
-		//v2-a2 = p2
-		//sqrt(v2-a2) = p magnitude
-		//sqrt ( vel mag ^2 - axis mag ^2 )
-		float velo = balls[ball1]->velocity->Length();
-		float linkaxis = axis01->Length();
-		qDebug() << "V" << velo;
-		qDebug() << "L" << linkaxis;
-		double pmag = sqrt( absJC( (velo * velo) - (linkaxis * linkaxis) ) );
-		qDebug() << "PMAG " << pmag;
-		//find perp vector
-		//y,-x is needed make perp2 off of axis
-		qDebug() << "axis     "<<axis01->x<<" "<<axis01->y;
-		axis01->makePerpindicular2();
-		qDebug() << "perpaxis "<<axis01->x<<" "<<axis01->y;
-		//normalize
-		axis01= axis01->normalize();
-		qDebug() << "norpaxis "<<axis01->x<<" "<<axis01->y;
-		//multiply by p mag
-		axis01->Multiply(pmag);
-		qDebug() << "final  V "<<axis01->x<<" "<<axis01->y;
-		qDebug();
-		//apply to velocity
-		balls[ball1]->velocity->x = axis01->x;
-		balls[ball1]->velocity->y = axis01->y;
+		//how much of a vector lies along it is the dot product
+
+		//Vvel*Vperp = Vfinalvel * Mperp
+		//finalmag= Vvel * Vperp / Mperp
+
+
+
+		Vector* perplink = new Vector(axis01->x,axis01->y);
+		qDebug() << "perplink " << perplink->x << " " << perplink->y;
+		perplink->makePerpindicular();
+		qDebug() << "perpindi " << perplink->x << " " << perplink->y;
+		float howmuch = perplink->DotProduct(balls[ball1]->velocity);
+		howmuch = howmuch / perplink->Length();
+		qDebug() << "howmuch " << howmuch;
+		Vector* newVelocity = perplink->normalize();
+		qDebug() << "norm " << newVelocity->x<<" "<< newVelocity->y;
+		newVelocity->Multiply(howmuch);
+		qDebug() << "mult " << newVelocity->x<<" "<< newVelocity->y;
+		balls[ball1]->velocity = newVelocity;
+
+
+
+
+
+		// // ball1 is the ball, ball2 is the structure
+		// // need to compare velocity vector to perpendicular link vector
+		// // axis01 is from ball to support structure
+		// qDebug() << "velocity " << balls[ball1]->velocity->x << " " << balls[ball1]->velocity->y;
+		// qDebug() << "axis " << axis01->x << " " << axis01->y;
+		// //find proportion of velocity vector 
+		// //v2 = a2 + p2
+		// //v2-a2 = p2
+		// //sqrt(v2-a2) = p magnitude
+		// //sqrt ( vel mag ^2 - axis mag ^2 )
+		// float velo = balls[ball1]->velocity->Length();
+		// float linkaxis = axis01->Length();
+		// qDebug() << "V" << velo;
+		// qDebug() << "L" << linkaxis;
+		// double pmag = sqrt( absJC( (velo * velo) - (linkaxis * linkaxis) ) );
+		// qDebug() << "PMAG " << pmag;
+		// //proportion out of 100 that
+		// //find perp vector
+		// //y,-x is needed make perp2 off of axis
+		// qDebug() << "axis     "<<axis01->x<<" "<<axis01->y;
+		// axis01->makePerpindicular2();
+		// qDebug() << "perpaxis "<<axis01->x<<" "<<axis01->y;
+		// //normalize
+		// axis01= axis01->normalize();
+		// qDebug() << "norpaxis "<<axis01->x<<" "<<axis01->y;
+		// //multiply by p mag
+		// axis01->Multiply(pmag);
+		// qDebug() << "final  V "<<axis01->x<<" "<<axis01->y;
+		// qDebug();
+		// //apply to velocity
+		// balls[ball1]->velocity->x = axis01->x;
+		// balls[ball1]->velocity->y = axis01->y;
+
+
 
 
 		/*
@@ -341,10 +374,10 @@ void TimerHandler::onTimer()
 		if (!balls[p]->stationary)
 		{
 			balls[p]->move(1);
+			balls[p]->velocity->Add(0, GRAVITY);//add gravity 
 		}
 	}
-
-	balls[0]->velocity->Add(0, 1);//add gravity only to ball1
+	
 
 	// CHECK FOR FAILURE POINTS
 	for (int j = 0; j < NUMBALLS; j++) {
@@ -579,9 +612,9 @@ int main(int argc, char** argv)
 		canvas->addItem(links[i]);
 
 	}
-	balls[0]->position->x -= 100;
-	balls[0]->position->y -= 100;
-	balls[0]->velocity->y = -7;
+	balls[0]->position->x -= 1;
+	balls[0]->position->y -= 200;
+	balls[0]->velocity->y = 0;
 	balls[0]->setPos(balls[0]->position->x, balls[0]->position->y);
 	qDebug() << "velocity " << balls[0]->velocity->x << " " << balls[0]->velocity->y;
 
